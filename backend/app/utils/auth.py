@@ -11,7 +11,13 @@ from app.database import get_db
 from app.models.user import UserManager
 from app.schemas.user import TokenData
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Use pbkdf2_sha256 instead of bcrypt (no 72-byte limit)
+pwd_context = CryptContext(
+    schemes=["pbkdf2_sha256"],
+    deprecated="auto",
+    pbkdf2_sha256__default_rounds=100000  # Adjust for performance
+)
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -48,12 +54,10 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
     
-    user = db.query(UserManager).filter(UserManager.Email == token_data.email).first()
+    user = db.query(UserManager).filter(UserManager.email == token_data.email).first()
     if user is None:
         raise credentials_exception
     return user
-
-# check for user roles
 
 async def get_current_admin(current_user: UserManager = Depends(get_current_user)):
     if current_user.Role != "Admin":

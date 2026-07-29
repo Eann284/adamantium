@@ -32,17 +32,19 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     hashed_password = get_password_hash(user.password)
 
     new_user = UserManager(
-        Name=user.Name,
-        Email=user.Email,
-        Password=hashed_password,
-        Role=user.Role,
-        Area=user.Area,
-        Stock=0
+        name=user.name,
+        email=user.email,
+        password=hashed_password,
+        role=user.role,
+        area=user.area,
+        stock=0
     )
 
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    return new_user
 
 @router.post("/login", response_model = Token)
 def login(
@@ -64,7 +66,10 @@ def login(
     access_token = create_access_token(
         data={"sub": user.email, "role": user.role}
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+
+    return {"access_token": access_token, "token_type": "bearer", "user":user}
+
+
 
      
 @router.get("/me", response_model=UserResponse)

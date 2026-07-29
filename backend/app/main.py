@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine, Base
 from app.models.user import UserManager
-from app.api import auth
+from app.api import auth_router, products_router
 from app.database import get_db
 
 app = FastAPI(
@@ -21,16 +21,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# dependency so i dont have to type a long line every time
 
-db_dependency = Depends(get_db)
 
 
 # Create all tables
 Base.metadata.create_all(bind=engine)
 
 # Include routers
-app.include_router(auth.router)
+app.include_router(auth_router)
+app.include_router(products_router)
 
 @app.get("/")
 async def root():

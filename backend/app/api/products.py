@@ -6,7 +6,7 @@ from app.database import get_db
 from app.models.product import Product
 from app.schemas.products import ProductCreate, ProductUpdate, ProductResponse
 from app.utils.auth import get_current_admin
-from app.main import db_dependency
+from app.utils.database import db_dependency
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
@@ -77,8 +77,27 @@ def update_product(product_id: int, product_update: ProductUpdate, db:Session = 
                 detail="Product with this name already exists"
             )
 
-        if product_update.Product_image is not None:
-            product_to_update.Product_image = product_update.Product_image
+    if product_update.Product_image is not None:
+        product_to_update.Product_image = product_update.Product_image
+
+    db.commit()
+    db.refresh(product_to_update)
+
+    return product_to_update
+
 
 
 # delete product
+@router.delete("/{product_id}", status_code=status.HTTP_200_OK)
+def delete_product(product_id:int, db:Session = db_dependency, current_user = Depends(get_current_admin)):
+    product_to_delete = db.query(Product).filter(Product.id == product_id).first()
+
+    if not product_to_delete:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Product not found"
+        )
+
+    db.delete(product_to_delete)
+    db.commit()
+    return None
