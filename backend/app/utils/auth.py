@@ -53,6 +53,8 @@ async def get_current_user(
         raise credentials_exception
     return user
 
+# check for user roles
+
 async def get_current_admin(current_user: UserManager = Depends(get_current_user)):
     if current_user.Role != "Admin":
         raise HTTPException(

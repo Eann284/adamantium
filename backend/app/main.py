@@ -1,9 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine, Base
 from app.models.user import UserManager
 from app.api import auth
+from app.database import get_db
 
 app = FastAPI(
     title="Inventory Management System API",
@@ -19,6 +20,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# dependency so i dont have to type a long line every time
+
+db_dependency = Depends(get_db)
+
 
 # Create all tables
 Base.metadata.create_all(bind=engine)
