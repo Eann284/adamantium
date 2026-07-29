@@ -22,12 +22,12 @@ class UserCreate(BaseModel):
     area: AreaEnum
 
 class UserResponse(BaseModel):
-    ID: int
-    Name: str
-    Email: str
-    Role: str
-    Area: str
-    Stock: int
+    id: int
+    name: str
+    email: str
+    role: str
+    area: str
+    stock: int
 
     class Config:
         from_attributes = True
