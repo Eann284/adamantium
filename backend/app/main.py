@@ -1,27 +1,39 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.database import engine, Base
+from app.models.user import UserManager
+from app.api import auth
 
 app = FastAPI(
-    title="Inventory System",
-    version="1.0",
-    description="API for Inventory System"
+    title="Inventory Management System API",
+    version="0.1.0",
+    description="API for managing inventory, requests, and approvals"
 )
 
-# CORS
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict this
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Create all tables
 Base.metadata.create_all(bind=engine)
 
-running = True
-
+# Include routers
+app.include_router(auth.router)
 
 @app.get("/")
 async def root():
-    return running
+    return {
+        "message": "Inventory Management System API",
+        "version": "0.1.0",
+        "status": "running"
+    }
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
