@@ -112,14 +112,28 @@ def test_invalid_login():
     assert response.json()["detail"] == "Incorrect email or password"
 
 def test_get_current_user():
-    # Login
+    # Register a test user
+    register_response = client.post(
+        "/auth/register",
+        json={
+            "name": "Test User",
+            "email": "testuser@example.com",
+            "password": "testpass123",
+            "role": "Supervisor",
+            "area": "Cavite"
+        }
+    )
+    assert register_response.status_code == 200
+    
+    # Login with the test user
     login_response = client.post(
         "/auth/login",
         data={
-            "username": "kotone@gmail.com",
-            "password": "supervisor123"
+            "username": "testuser@example.com",
+            "password": "testpass123"
         }
     )
+    assert login_response.status_code == 200
     token = login_response.json()["access_token"]
     
     # Get current user
@@ -129,7 +143,9 @@ def test_get_current_user():
     )
     assert response.status_code == 200
     data = response.json()
-    assert data["email"] == "kotone@gmail.com"
+    
+    # Note: Your model uses uppercase field names
+    assert data["email"] == "testuser@example.com"
     assert data["role"] == "Supervisor"
 
 def test_get_current_user_invalid_token():
