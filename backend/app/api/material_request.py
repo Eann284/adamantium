@@ -1,7 +1,8 @@
+from datetime import datetime
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from utils.database import db_dependency
+from app.utils.database import db_dependency
 
 from app.models.user import UserManager
 from app.models.product import Product
@@ -35,10 +36,11 @@ def create_request(request: MaterialRequestCreate, db=db_dependency, current_use
 
     new_request = MaterialRequest(
         requestor_email = current_user.email,
+        date=datetime.now(),
         approval_status=ApprovalStatus.PENDING,
         release_status = ReleaseStatus.PENDING,
         mrf_files = request.mrf_files,
-        items=[item.dict() for item in request.items],
+        items=[item.model_dump() for item in request.items],
     )
 
     db.add(new_request)
@@ -112,7 +114,7 @@ def approve_request(mrf_id:int, db=db_dependency, current_user = Depends(get_cur
         if product and product.stock < item["quantity"]:
              raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Insufficient stock for product '{product.Product_Name}'. Available: {product.Stock}, Requested: {item['quantity']}"
+                detail=f"Insufficient stock for product '{product.product_name}'. Available: {product.stock}, Requested: {item['quantity']}"
             )
 
 
@@ -170,14 +172,14 @@ def edit_content(mrf_id:int, edited_items: List[RequestItem], db=db_dependency, 
             detail="Request not found"
         )
 
-    if request_to_edit.APPROVAL_STATUS != ApprovalStatus.PENDING:
+    if request_to_edit.approval_status != ApprovalStatus.PENDING:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Cannot edit request that is already {request_to_edit.APPROVAL_STATUS}"
         )
 
     for item in edited_items:
-        product = db.query(Product).filter(Product.Product_ID == item.product_id).first()
+        product = db.query(Product).filter(Product.id == item.product_id).first()
         if not product:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -195,7 +197,7 @@ def edit_content(mrf_id:int, edited_items: List[RequestItem], db=db_dependency, 
     return request_to_edit
 
 @router.get("/approved", response_model=List[MaterialRequestResponse])
-def get_approved(db=db_dependency, current_user = Depends(get_current_supervisor)):
+def get_approved(db=db_dependency, current_user = Depends(get_current_custodian)):
 
 
     approved_requests = db.query(MaterialRequest).filter(
@@ -218,7 +220,7 @@ def get_pending_releases(db=db_dependency, current_user = Depends(get_current_cu
     return pending_releases
 
 # get pending by id
-@router.get("/release/pending/{mrf_id}", response_model=MaterialRequest)
+@router.get("/release/pending/{mrf_id}", response_model=MaterialRequestResponse)
 def get_pending_release_by_id( mrf_id:int, db=db_dependency, current_user=Depends(get_current_custodian)):
     pending_release = db.query(MaterialRequest).filter(
         MaterialRequest.mrf_id == mrf_id
@@ -248,14 +250,14 @@ def release_request(mrf_id:int, db=db_dependency, current_user=Depends(get_curre
             )
 
      # Check if already released
-    if request_to_release.RELEASE_STATUS == ReleaseStatus.RELEASED:
+    if request_to_release.release_status == ReleaseStatus.RELEASED:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="This request has already been released"
         )
     
     # Check if approved
-    if request_to_release.APPROVAL_STATUS != ApprovalStatus.APPROVED:
+    if request_to_release.approval_status != ApprovalStatus.APPROVED:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only approved requests can be released"
@@ -305,14 +307,14 @@ def reject_request(mrf_id:int, db=db_dependency, current_user=Depends(get_curren
             )
 
      # Check if already released
-    if request_to_reject.RELEASE_STATUS == ReleaseStatus.RELEASED:
+    if request_to_reject.release_status == ReleaseStatus.RELEASED:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="This request has already been released"
         )
     
     # Check if approved
-    if request_to_reject.APPROVAL_STATUS != ApprovalStatus.APPROVED:
+    if request_to_reject.approval_status != ApprovalStatus.APPROVED:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only approved requests can be released"
@@ -320,7 +322,7 @@ def reject_request(mrf_id:int, db=db_dependency, current_user=Depends(get_curren
 
     # update content
 
-    request_to_reject.release_status = ReleaseStatus.NOT_RELEASED
+    request_to_reject.release_status = ReleaseStatus.PENDING
 
 
 
@@ -335,5 +337,5 @@ def reject_request(mrf_id:int, db=db_dependency, current_user=Depends(get_curren
 
 @router.get("/all", response_model=List[MaterialRequestResponse], status_code=status.HTTP_200_OK)
 def get_all_requests(db=db_dependency, current_user = Depends(get_current_admin), skip: int = 0, limit: int = 100):
-    requests = db.query(MaterialRequest).order_by(MaterialRequest.DATE.desc()).offset(skip).limit(limit).all()
+    requests = db.query(MaterialRequest).order_by(MaterialRequest.date.desc()).offset(skip).limit(limit).all()
     return requests

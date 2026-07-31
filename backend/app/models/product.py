@@ -9,8 +9,9 @@ class Product(Base):
     id = Column(Integer, primary_key=True, index=True)
     product_name = Column(String(100), nullable=False)
     product_image = Column(String(255), nullable=False)
+    stock = Column(Integer, default=0)
 
 
     # relationships
 
-    product = relationship("Release", back_populates="products")
+    releases = relationship("Release", back_populates="product")

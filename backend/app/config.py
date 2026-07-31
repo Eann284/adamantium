@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "mysql+pymysl://root@localhost:3306/inventory"
+    DATABASE_URL: str = "mysql+pymysql://root@localhost:3306/inventory"
 
     SECRET_KEY: str = ""
     ALGORITHM:str = "HS256"

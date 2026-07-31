@@ -26,3 +26,9 @@ class UserManager(Base):
     role = Column(Enum(RoleEnum), nullable=False)
     area = Column(Enum(AreaEnum), nullable=False)
     stock = Column(Integer, default=0)
+
+    material_requests = relationship("MaterialRequest", foreign_keys="MaterialRequest.requestor_email", back_populates="requestor")
+    approved_requests = relationship("MaterialRequest", foreign_keys="MaterialRequest.approved_by", back_populates="approver")
+    released_requests = relationship("MaterialRequest", foreign_keys="MaterialRequest.released_by", back_populates="releaser")
+
+

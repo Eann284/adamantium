@@ -8,7 +8,7 @@ from enum import Enum
 class ApprovalStatusEnum(str, Enum):
     PENDING = "Pending"
     APPROVED = "Approved"
-    NOT_APPROVED = "Not_Approved"
+    NOT_APPROVED = "Not Approved"
 
 class ReleaseStatusEnum(str, Enum):
     PENDING = "Pending"
@@ -25,17 +25,19 @@ class MaterialRequestCreate(BaseModel):
     mrf_files: Optional[str] = None
 
 class MaterialRequestResponse(BaseModel):
-    mrf_id: str
+    mrf_id: int
     requestor_email: str
-    date: str 
+    date: datetime 
     approval_status: ApprovalStatusEnum
-    approved_by: str
+    approved_by: Optional[str]
     release_status: ReleaseStatusEnum
-    released_by: str
+    released_by: Optional[str]
     mrf_files: str
+    items: List[dict]
 
     class Config:
         from_attributes = True
+        extra = "allow"
 
 class ReleaseResponse(BaseModel):
     sub_id: int
@@ -45,5 +47,6 @@ class ReleaseResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        extra = "allow"
 
 

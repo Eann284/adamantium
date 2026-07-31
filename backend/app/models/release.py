@@ -13,6 +13,6 @@ class Release(Base):
 
     # Relationships
 
-    mrf = relationship("MaterialRequest", back_populates="release")
+    mrf = relationship("MaterialRequest", back_populates="releases")
     product = relationship("Product", back_populates="releases")
     

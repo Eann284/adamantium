@@ -1,6 +1,7 @@
+from datetime import datetime
 import enum
 
-from sqlalchemy import Column, Integer, String, DateTime, Enum, ForeignKey, JSON
+from sqlalchemy import Column, Integer, String, DateTime, Enum, ForeignKey, JSON, func
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -23,10 +24,10 @@ class MaterialRequest(Base):
 
     mrf_id = Column(Integer, primary_key=True, index=True)
     requestor_email = Column(String(50), ForeignKey("users.email")) # fk to user.email
-    date = Column(DateTime)
+    date = Column(DateTime, default=datetime.now())
     approval_status = Column(Enum(ApprovalStatus), default=ApprovalStatus.PENDING)
     approved_by = Column(String(50), ForeignKey("users.email"))
-    release_status = Column(Enum(ApprovalStatus), default = ReleaseStatus.PENDING)
+    release_status = Column(Enum(ReleaseStatus), default = ReleaseStatus.PENDING)
     released_by = Column(String(50), ForeignKey("users.email"))
     mrf_files = Column(String(500), nullable=True)
 
@@ -34,13 +35,10 @@ class MaterialRequest(Base):
 
 
     # RELATIONSHIPS
-    requestor = relationship("UserManager", foreign_keys=[requestor_email], back_populates="material_request")
-
-    approver = relationship("UserManager", foreign_keys=[approved_by], back_populates="material_request")
-
-    releaser = relationship("UserManager", foreign_keys=[released_by], back_populates="material_request")
-
-    releases = relationship("Release", back_populates="material_request")
+    requestor = relationship("UserManager", foreign_keys=[requestor_email], back_populates="material_requests")
+    approver = relationship("UserManager", foreign_keys=[approved_by], back_populates="approved_requests")
+    releaser = relationship("UserManager", foreign_keys=[released_by], back_populates="released_requests")
+    releases = relationship("Release", back_populates="mrf")
 
 
 
