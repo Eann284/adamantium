@@ -3,5 +3,6 @@ from app.api.products import router as products_router
 
 __all__ = [
     "auth_router",
-    "products_router"
+    "products_router",
+    "material_request_router"
 ]
