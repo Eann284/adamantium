@@ -15,3 +15,4 @@ class Product(Base):
     # relationships
 
     releases = relationship("Release", back_populates="product")
+    add_stock = relationship("Stock", back_populates="product")

@@ -31,4 +31,6 @@ class UserManager(Base):
     approved_requests = relationship("MaterialRequest", foreign_keys="MaterialRequest.approved_by", back_populates="approver")
     released_requests = relationship("MaterialRequest", foreign_keys="MaterialRequest.released_by", back_populates="releaser")
 
+    wh_logs = relationship("WHLogs", back_populates="user")
+    add_stocks = relationship("Stock", foreign_keys="Stock.wh_id", back_populates="warehouse")
 
