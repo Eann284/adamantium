@@ -57,9 +57,12 @@ def setup_module(module):
         db.rollback()
     finally:
         db.close()
+
+    print("=== SETUP IS RUNNING ===")
     
     # Create admin
     create_test_user("Admin", "peter@gmail.com", "peter")
+
     
     # Create technician
     create_test_user("Technician", "sohyun@gmail.com", "sohyun")
@@ -72,16 +75,24 @@ def setup_module(module):
     
     # Create products
     admin_token = login_user("peter@gmail.com", "peter")
-    client.post(
+    product_1 = client.post(
         "/products/",
-        json={"product_name": "Laptop", "product_image": "laptop.jpg"},  # ✅ Fixed
+        json={"product_name": "Laptop", "product_image": "laptop.jpg"},  
         headers={"Authorization": f"Bearer {admin_token}"}
     )
-    client.post(
+
+    print(f"Create Laptop: {product_1.status_code}")
+
+    product_2 = client.post(
         "/products/",
-        json={"product_name": "Mouse", "product_image": "mouse.jpg"},  # ✅ Fixed typo
+        json={"product_name": "Mouse", "product_image": "mouse.jpg"},  
         headers={"Authorization": f"Bearer {admin_token}"}
     )
+
+    print(f"Create Mouse: {product_2.status_code}")
+
+    print("=== SETUP IS COMPLETE ===")
+
 
 
 # ==================== TECHNICIAN TESTS ====================

@@ -55,6 +55,8 @@ def create_product(product: ProductCreate, db:Session = db_dependency, current_u
     db.commit()
     db.refresh(new_product)
 
+    return new_product
+
 # update product
 @router.put("/{product_id}", response_model=ProductUpdate, status_code=status.HTTP_201_CREATED)
 def update_product(product_id: int, product_update: ProductUpdate, db:Session = db_dependency):
