@@ -59,19 +59,19 @@ def setup_module(module):
     
     product_1 = client.post(
         "/products/",
-        json={"product_name": "Keyboard", "product_image": "laptop.jpg", "stock": 200},  
+        json={"product_name": "Mouse", "product_image": "laptop.jpg", "stock": 200},  
         headers={"Authorization": f"Bearer {admin_token}"}
     )
-    print(f"Create Keyboard: {product_1.status_code}")
-    assert product_1.status_code == 201, f"Failed to create Laptop: {product_1.json()}"
+    print(f"Create Mouse: {product_1.status_code}")
+    assert product_1.status_code == 201, f"Failed to create Mouse: {product_1.json()}"
 
     product_2 = client.post(
         "/products/",
-        json={"product_name": "Monitor", "product_image": "mouse.jpg", "stock": 200},  
+        json={"product_name": "Mousepad", "product_image": "mouse.jpg", "stock": 200},  
         headers={"Authorization": f"Bearer {admin_token}"}
     )
-    print(f"Create Monitor: {product_2.status_code}")
-    assert product_2.status_code == 201, f"Failed to create Mouse: {product_2.json()}"
+    print(f"Create Mousepad: {product_2.status_code}")
+    assert product_2.status_code == 201, f"Failed to create Mousepad: {product_2.json()}"
 
     print("=== SETUP IS COMPLETE ===")
 
