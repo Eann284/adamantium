@@ -1,4 +1,5 @@
-from datetime import datetime
+from sqlalchemy.sql import func
+
 import enum
 
 from sqlalchemy import Column, Integer, String, DateTime, Enum, ForeignKey, JSON, func
@@ -24,7 +25,7 @@ class MaterialRequest(Base):
 
     mrf_id = Column(Integer, primary_key=True, index=True)
     requestor_email = Column(String(50), ForeignKey("users.email")) # fk to user.email
-    date = Column(DateTime, default=datetime.now())
+    date = Column(DateTime, server_default=func.now())
     approval_status = Column(Enum(ApprovalStatus), default=ApprovalStatus.PENDING)
     approved_by = Column(String(50), ForeignKey("users.email"))
     release_status = Column(Enum(ReleaseStatus), default = ReleaseStatus.PENDING)
