@@ -49,7 +49,8 @@ def create_product(product: ProductCreate, db:Session = db_dependency, current_u
     # creating new product
     new_product = Product(
         product_name = product.product_name,
-        product_image = product.product_image
+        product_image = product.product_image,
+        stock = product.stock
     )
     db.add(new_product)
     db.commit()

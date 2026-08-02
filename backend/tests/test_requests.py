@@ -46,53 +46,34 @@ def login_user(email: str, password: str):
 
 def setup_module(module):
     """Setup test data before running tests"""
-    # Clean up existing test users
-    db = sessionLocal()
-    try:
-        db.query(UserManager).filter(UserManager.email.in_([
-            "peter@gmail.com", "sohyun@gmail.com", "hina@gmail.com", "steve@gmail.com"
-        ])).delete()
-        db.commit()
-    except:
-        db.rollback()
-    finally:
-        db.close()
-
     print("=== SETUP IS RUNNING ===")
     
-    # Create admin
+    # Create users
     create_test_user("Admin", "peter@gmail.com", "peter")
-
-    
-    # Create technician
     create_test_user("Technician", "sohyun@gmail.com", "sohyun")
-    
-    # Create supervisor
     create_test_user("Supervisor", "hina@gmail.com", "hina")
-    
-    # Create custodian
     create_test_user("Custodian", "steve@gmail.com", "steve")
     
-    # Create products
+    # Create products with explicit wait for database
     admin_token = login_user("peter@gmail.com", "peter")
+    
     product_1 = client.post(
         "/products/",
-        json={"product_name": "Laptop", "product_image": "laptop.jpg"},  
+        json={"product_name": "Keyboard", "product_image": "laptop.jpg", "stock": 200},  
         headers={"Authorization": f"Bearer {admin_token}"}
     )
-
-    print(f"Create Laptop: {product_1.status_code}")
+    print(f"Create Keyboard: {product_1.status_code}")
+    assert product_1.status_code == 201, f"Failed to create Laptop: {product_1.json()}"
 
     product_2 = client.post(
         "/products/",
-        json={"product_name": "Mouse", "product_image": "mouse.jpg"},  
+        json={"product_name": "Monitor", "product_image": "mouse.jpg", "stock": 200},  
         headers={"Authorization": f"Bearer {admin_token}"}
     )
-
-    print(f"Create Mouse: {product_2.status_code}")
+    print(f"Create Monitor: {product_2.status_code}")
+    assert product_2.status_code == 201, f"Failed to create Mouse: {product_2.json()}"
 
     print("=== SETUP IS COMPLETE ===")
-
 
 
 # ==================== TECHNICIAN TESTS ====================

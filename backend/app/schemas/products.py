@@ -4,7 +4,7 @@ from typing import Optional
 class ProductCreate(BaseModel):
     product_name: str
     product_image: Optional[str] = None
-    stock: int
+    stock: Optional[int] = 0
 
 
 class ProductUpdate(BaseModel):
