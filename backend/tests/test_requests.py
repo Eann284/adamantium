@@ -2,8 +2,16 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.database import sessionLocal
 from app.models.user import UserManager
+from app.api.material_request import router as material_request_router
+
+
+if not any(hasattr(r,'path') and r.path == "/requests/" for r in app.routes):
+    app.include_router(material_request_router)
+
+
 
 client = TestClient(app)
+
 
 
 # ==================== HELPER FUNCTIONS ====================
