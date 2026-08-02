@@ -26,18 +26,14 @@ def add_stock(
     current_user = Depends(get_current_admin)
     ):
 
-    product = db.query(Product).filter(Product.id == stock.id).first()
+    product = db.query(Product).filter(Product.id == stock.product_id).first()
 
-    if product.stock > 0:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Stock already exists ({product.stock}). Can only add when stock is 0."
-        )
-
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
     # auto log entry
     new_log = Log(
-        current_user.email,
-        stock.wh_proof or None
+        wh_email = current_user.email,
+        wh_proof = stock.wh_proof or None
     )
 
     db.add(new_log)
@@ -45,9 +41,9 @@ def add_stock(
 
     # add the stock
     new_stock = Stock(
-        id = current_user.email,
+        wh_id = current_user.email,
         wh_logs = new_log.id,
-        product_id = stock.id,
+        product_id = stock.product_id,
         quantity = stock.quantity
     )
 
@@ -64,8 +60,8 @@ def add_stock(
 
 
 @router.get("/logs", response_model=List[LogResponse], status_code=status.HTTP_200_OK)
-def get_logs(db: Session = db_dependency, current_user = Depends(get_current_admin), skip:int = 5, limit:int = 10):
-    logs = db.query(Log).order_by(Log.date.desc().offset(skip).limit(limit)).all()
+def get_logs(db: Session = db_dependency, current_user = Depends(get_current_admin), skip:int = 0, limit:int = 10):
+    logs = db.query(Log).order_by(Log.date.desc()).offset(skip).limit(limit).all()
 
     return logs
 

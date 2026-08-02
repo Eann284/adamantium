@@ -24,12 +24,12 @@ class MaterialRequest(Base):
     __tablename__ = "material_request"
 
     mrf_id = Column(Integer, primary_key=True, index=True)
-    requestor_email = Column(String(50), ForeignKey("users.email")) # fk to user.email
+    requestor_email = Column(String(255), ForeignKey("users.email")) # fk to user.email
     date = Column(DateTime, server_default=func.now())
     approval_status = Column(Enum(ApprovalStatus), default=ApprovalStatus.PENDING)
-    approved_by = Column(String(50), ForeignKey("users.email"))
+    approved_by = Column(String(255), ForeignKey("users.email"))
     release_status = Column(Enum(ReleaseStatus), default = ReleaseStatus.PENDING)
-    released_by = Column(String(50), ForeignKey("users.email"))
+    released_by = Column(String(255), ForeignKey("users.email"))
     mrf_files = Column(String(500), nullable=True)
 
     items = Column(JSON, nullable=False)

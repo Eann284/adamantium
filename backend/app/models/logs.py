@@ -8,14 +8,14 @@ class Log(Base):
     __tablename__ = "logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    wh_email = Column(String(50), ForeignKey("users.email"))
+    wh_email = Column(String(255), ForeignKey("users.email"), nullable=False)
     date = Column(DateTime, server_default=func.now())
     wh_proof = Column(String(100), nullable=True)
 
 
     # relationships
-    admin = relationship("UserManager", back_populates="wh_admin_logs")
-    stock = relationship("StockManager", back_populates="wh_logs")
+    user = relationship("UserManager", back_populates="wh_logs")
+    stock = relationship("Stock", back_populates="log_entry")
     
     
     
