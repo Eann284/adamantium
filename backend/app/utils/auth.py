@@ -60,7 +60,7 @@ async def get_current_user(
     return user
 
 async def get_current_admin(current_user: UserManager = Depends(get_current_user)):
-    if current_user.Role != "Admin":
+    if current_user.role != "Admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin privileges required"
@@ -68,7 +68,7 @@ async def get_current_admin(current_user: UserManager = Depends(get_current_user
     return current_user
 
 async def get_current_supervisor(current_user: UserManager = Depends(get_current_user)):
-    if current_user.Role not in ["Admin", "Supervisor"]:
+    if current_user.role not in ["Admin", "Supervisor"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Supervisor or Admin privileges required"
@@ -76,7 +76,7 @@ async def get_current_supervisor(current_user: UserManager = Depends(get_current
     return current_user
 
 async def get_current_custodian(current_user: UserManager = Depends(get_current_user)):
-    if current_user.Role not in ["Admin", "Custodian"]:
+    if current_user.role not in ["Admin", "Custodian"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Custodian or Admin privileges required"
@@ -84,7 +84,7 @@ async def get_current_custodian(current_user: UserManager = Depends(get_current_
     return current_user
 
 async def get_current_technician(current_user: UserManager = Depends(get_current_user)):
-    if current_user.Role not in ["Admin", "Technician"]:
+    if current_user.role not in ["Admin", "Technician"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Technician or Admin privileges required"

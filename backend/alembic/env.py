@@ -9,7 +9,7 @@ load_dotenv()
 
 # Import your models
 from app.database import Base
-from app.models import UserManager, Product
+from app.models import UserManager, Product, MaterialRequest, Release
 
 # this is the Alembic Config object
 config = context.config
