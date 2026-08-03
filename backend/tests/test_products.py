@@ -400,7 +400,7 @@ def test_custodian_release_request():
     assert data["released_by"] == "steve@gmail.com"
 
     # Manually delete the releases to avoid FK constraint when deleting product
-    db = SessionLocal()
+    db = sessionLocal()
     try:
         db.query(Release).filter(Release.mrf_id == mrf_id).delete()
         db.commit()
