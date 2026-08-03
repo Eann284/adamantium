@@ -83,6 +83,13 @@ def update_product(product_id: int, product_update: ProductUpdate, db:Session = 
     if product_update.Product_image is not None:
         product_to_update.Product_image = product_update.Product_image
 
+    if product_to_update is None:
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Product with this ID does not exist"
+            )
+
+   
     db.commit()
     db.refresh(product_to_update)
 
