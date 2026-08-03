@@ -12,8 +12,8 @@ router = APIRouter(prefix="/products", tags=["Products"])
 
 
 # get all products
-@router.get("/", response_model = List[ProductResponse])
-async def get_products(
+@router.get("/", response_model = List[ProductResponse], status_code=status.HTTP_200_OK)
+def get_products(
     skip: int = 0,
     limit:int = 100,
     db:Session = db_dependency
@@ -22,7 +22,7 @@ async def get_products(
     return products
 
 # get product by id
-@router.get("/{product_id}", response_model = ProductResponse)
+@router.get("/{product_id}", response_model = ProductResponse, status_code=status.HTTP_200_OK)
 def get_product_by_id(product_id: int, db:Session = db_dependency):
     product = db.query(Product).filter(Product.id == product_id).first()
 
@@ -43,7 +43,7 @@ def create_product(product: ProductCreate, db:Session = db_dependency, current_u
     if existing_product:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Product with this name already exists"
+            detail="product with this name already exists"
         )
 
     # creating new product
@@ -52,6 +52,7 @@ def create_product(product: ProductCreate, db:Session = db_dependency, current_u
         product_image = product.product_image,
         stock = product.stock
     )
+
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
@@ -59,13 +60,13 @@ def create_product(product: ProductCreate, db:Session = db_dependency, current_u
     return new_product
 
 # update product
-@router.put("/{product_id}", response_model=ProductUpdate, status_code=status.HTTP_201_CREATED)
-def update_product(product_id: int, product_update: ProductUpdate, db:Session = db_dependency):
+@router.put("/{product_id}", response_model=ProductResponse, status_code=status.HTTP_200_OK)
+def update_product(product_id: int, product_update: ProductUpdate, db:Session = db_dependency, current_user = Depends(get_current_admin)):
     product_to_update = db.query(Product).filter(Product.id == product_id).first()
     if not product_to_update:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product Not Found."
+            detail="product with this id does not exist"
         )
 
     if product_update.product_name is not None:
@@ -77,12 +78,19 @@ def update_product(product_id: int, product_update: ProductUpdate, db:Session = 
         if existing_product:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Product with this name already exists"
+                detail="product with this name already exists"
             )
+        product_to_update.product_name = product_update.product_name
 
-    if product_update.Product_image is not None:
-        product_to_update.Product_image = product_update.Product_image
+    if product_update.product_image is not None:
+        product_to_update.product_image = product_update.product_image
 
+
+    if product_update.stock is not None:
+        product_to_update.stock = product_update.stock  
+
+
+   
     db.commit()
     db.refresh(product_to_update)
 
@@ -98,7 +106,7 @@ def delete_product(product_id:int, db:Session = db_dependency, current_user = De
     if not product_to_delete:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found"
+            detail="product not found"
         )
 
     db.delete(product_to_delete)
