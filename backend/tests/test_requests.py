@@ -55,23 +55,7 @@ def setup_module(module):
     create_test_user("Custodian", "steve@gmail.com", "steve")
     
     # Create products with explicit wait for database
-    admin_token = login_user("peter@gmail.com", "peter")
     
-    product_1 = client.post(
-        "/products/",
-        json={"product_name": "Mouse", "product_image": "laptop.jpg", "stock": 200},  
-        headers={"Authorization": f"Bearer {admin_token}"}
-    )
-    print(f"Create Mouse: {product_1.status_code}")
-    assert product_1.status_code == 201, f"Failed to create Mouse: {product_1.json()}"
-
-    product_2 = client.post(
-        "/products/",
-        json={"product_name": "Mousepad", "product_image": "mouse.jpg", "stock": 200},  
-        headers={"Authorization": f"Bearer {admin_token}"}
-    )
-    print(f"Create Mousepad: {product_2.status_code}")
-    assert product_2.status_code == 201, f"Failed to create Mousepad: {product_2.json()}"
 
     print("=== SETUP IS COMPLETE ===")
 
@@ -80,13 +64,35 @@ def setup_module(module):
 
 def test_technician_create_request():
     token = login_user("sohyun@gmail.com", "sohyun")
+
+    admin_token = login_user("peter@gmail.com", "peter")
+
+    product_1 = client.post(
+        "/products/",
+        json={"product_name": "Test Mouse", "product_image": "laptop.jpg", "stock": 200},  
+        headers={"Authorization": f"Bearer {admin_token}"}
+        )
+    assert product_1.status_code == 201, f"Failed to create Mouse: {product_1.json()}"
+    
+    product_2 = client.post(
+            "/products/",
+            json={"product_name": "Test Mousepad", "product_image": "mouse.jpg", "stock": 200},  
+            headers={"Authorization": f"Bearer {admin_token}"}
+        )
+    assert product_2.status_code == 201, f"Failed to create Mousepad: {product_2.json()}"
+
+    product1 = product_1.json()
+    product1_id = product1["id"]
+
+    product2 = product_1.json()
+    product2_id = product2["id"]
     
     response = client.post(
         "/requests/",
         json={
             "items": [
-                {"product_id": 1, "quantity": 2},
-                {"product_id": 2, "quantity": 3}
+                {"product_id": product1_id, "quantity": 2},
+                {"product_id": product2_id, "quantity": 3}
             ],
             "mrf_files": "photo1.jpg,photo2.jpg"
         },
