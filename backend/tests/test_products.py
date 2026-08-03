@@ -1,7 +1,7 @@
 import time
 from fastapi.testclient import TestClient
 from app.main import app
-from app.database import SessionLocal
+from app.database import sessionLocal
 from app.models.user import UserManager
 from app.api.material_request import router as material_request_router
 from app.models.product import Product
@@ -77,7 +77,7 @@ def setup_module(module):
 
 def teardown_module(module):
     # Safety cleanup: delete any leftover test products
-    db = SessionLocal()
+    db = sessionLocal()
     try:
         db.execute(text("SET FOREIGN_KEY_CHECKS = 0"))
         db.query(Product).filter(Product.product_name.like("Test%")).delete()
