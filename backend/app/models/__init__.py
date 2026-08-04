@@ -4,6 +4,7 @@ from app.models.material_request import MaterialRequest
 from app.models.release import Release
 from app.models.logs import Log
 from app.models.stock import Stock
+from app.models.inventory import AreaEnum, ProductsInventory
 
 __all__ = [
     "UserManager",
@@ -15,6 +16,8 @@ __all__ = [
     "ApprovalStatus",
     "ReleaseStatus",
     "Log",
-    "Stock"
+    "Stock",
+    "AreaEnum",
+    "ProductsInventory"
 ]
 

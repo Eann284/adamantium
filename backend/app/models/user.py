@@ -32,5 +32,5 @@ class UserManager(Base):
     released_requests = relationship("MaterialRequest", foreign_keys="MaterialRequest.released_by", back_populates="releaser")
 
     wh_logs = relationship("Log", back_populates="user")
-    add_stock = relationship("Stock", foreign_keys="Stock.wh_id", back_populates="warehouse")
+    add_stocks = relationship("Stock", foreign_keys="Stock.wh_id", back_populates="warehouse")
 

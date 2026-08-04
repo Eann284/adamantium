@@ -46,7 +46,7 @@ def add_stock(
         product_id = stock.product_id,
         quantity = stock.quantity
     )
-
+    
     db.add(new_stock)
 
     # update products table

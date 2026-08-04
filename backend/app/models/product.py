@@ -8,11 +8,11 @@ class Product(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     product_name = Column(String(100), nullable=False)
-    product_image = Column(String(255), nullable=False)
-    stock = Column(Integer, default=0)
+    product_image = Column(String(255), nullable=True)
 
 
     # relationships
 
     releases = relationship("Release", back_populates="product")
-    add_stock = relationship("Stock", back_populates="product")
+    add_stocks = relationship("Stock", back_populates="product")
+    inventory = relationship("ProductsInventory", back_populates="product")
