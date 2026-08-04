@@ -20,4 +20,4 @@ class Stock(Base):
     warehouse = relationship("UserManager", foreign_keys=[wh_id], back_populates="add_stocks")
     log_entry = relationship("Log", back_populates="stock")
     inventory = relationship("ProductsInventory", back_populates="add_stocks")
-    product = relationship("Product", back_populates="add_stocks")
+    # product = relationship("Product", back_populates="add_stocks")

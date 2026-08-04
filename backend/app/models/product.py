@@ -10,9 +10,8 @@ class Product(Base):
     product_name = Column(String(100), nullable=False)
     product_image = Column(String(255), nullable=True)
 
-
     # relationships
 
     releases = relationship("Release", back_populates="product")
-    add_stocks = relationship("Stock", back_populates="product")
+    # add_stocks = relationship("Stock", back_populates="product")
     inventory = relationship("ProductsInventory", back_populates="product")
