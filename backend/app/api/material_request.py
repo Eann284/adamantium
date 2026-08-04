@@ -15,6 +15,9 @@ from app.schemas.material_request import (
     RequestItem, ReleaseResponse
 )
 from app.utils.auth import get_current_technician, get_current_supervisor, get_current_custodian, get_current_admin
+from app.utils.email import send_release_email
+import asyncio
+
 
 router = APIRouter(prefix="/requests", tags=["Material Requests"])
 
@@ -284,9 +287,28 @@ def release_request(mrf_id:int, db=db_dependency, current_user=Depends(get_curre
     db.commit()
     db.refresh(request_to_release)
 
+    try:
+        technician = db.query(UserManager).filter(
+            UserManager.email == request_to_release.requestor_email
+        ).first()
+
+        if technician:
+            print(technician.name)
+            send_release_email(
+                    technician_email=technician.email,
+                    technician_name=technician.name,
+                    mrf_id = request_to_release.mrf_id,
+                    release_by=current_user.email,
+                    items = request_to_release.items
+                )
+        else:
+            print("No Technician")
+            
+    except Exception as e:
+        print(e)
+
+
     # return
-
-
     return request_to_release
 
 
