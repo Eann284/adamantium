@@ -44,7 +44,7 @@ def login_user(email: str, password: str):
         return response.json().get("access_token")
     return None
 
-def create_product(name: str, stock: int = 200, admin_token: str = None) -> int:
+def create_product(name: str, admin_token: str = None) -> int:
     """Create a product and return its ID."""
     if admin_token is None:
         admin_token = login_user("peter@gmail.com", "peter")
@@ -53,7 +53,7 @@ def create_product(name: str, stock: int = 200, admin_token: str = None) -> int:
         json={
             "product_name": unique_name(name),
             "product_image": f"{name.lower()}.jpg",
-            "stock": stock
+           
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -65,6 +65,23 @@ def delete_product(product_id: int, admin_token: str = None):
     if admin_token is None:
         admin_token = login_user("peter@gmail.com", "peter")
     client.delete(f"/products/{product_id}", headers={"Authorization": f"Bearer {admin_token}"})
+
+def add_stock_to_product(product_id: int, area: str = "Cavite", quantity: int = 10, admin_token: str = None):
+    """Add stock to a product using the inventory endpoint."""
+    if admin_token is None:
+        admin_token = login_user("peter@gmail.com", "peter")
+    response = client.post(
+        "/inventory/add",
+        json={
+            "product_id": product_id,
+            "area": area,
+            "quantity": quantity,
+            "wh_proof": f"Test stock for product {product_id}"
+        },
+        headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    assert response.status_code == 201, f"Failed to add stock: {response.json()}"
+    return response.json()
 
 # ==================== SETUP ====================
 
@@ -208,6 +225,7 @@ def test_supervisor_approve_request():
     assert admin_token is not None
 
     p1_id = create_product("ApproveTest", admin_token=admin_token)
+    add_stock_to_product(p1_id, "Cavite", 10, admin_token)
 
     tech_token = login_user("sohyun@gmail.com", "sohyun")
     assert tech_token is not None
@@ -316,6 +334,8 @@ def test_supervisor_edit_request():
     delete_product(p1_id, admin_token)
     delete_product(p2_id, admin_token)
 
+
+
 # ==================== CUSTODIAN TESTS ====================
 
 def test_custodian_view_approved_requests():
@@ -364,6 +384,7 @@ def test_custodian_release_request():
     assert admin_token is not None
 
     p1_id = create_product("ReleaseTest", admin_token=admin_token)
+    add_stock_to_product(p1_id, "Cavite", 10, admin_token)
 
     tech_token = login_user("sohyun@gmail.com", "sohyun")
     assert tech_token is not None
@@ -414,6 +435,7 @@ def test_custodian_reject_request():
     assert admin_token is not None
 
     p1_id = create_product("RejectTest", admin_token=admin_token)
+    add_stock_to_product(p1_id, "Cavite", 10, admin_token)
 
     tech_token = login_user("sohyun@gmail.com", "sohyun")
     assert tech_token is not None
