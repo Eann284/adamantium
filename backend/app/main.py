@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine, Base
 from app.models.user import UserManager
-from app.api import auth_router, products_router, material_request_router, stock_router, inventory_router
+from app.api import auth_router, products_router, material_request_router, inventory_router
 from app.database import get_db
 
 app = FastAPI(
@@ -31,7 +31,6 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth_router)
 app.include_router(products_router)
 app.include_router(material_request_router)
-app.include_router(stock_router)
 app.include_router(inventory_router)
 
 @app.get("/")

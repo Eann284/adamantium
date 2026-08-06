@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.utils.database import db_dependency
 
@@ -17,6 +18,8 @@ from app.schemas.material_request import (
 from app.utils.auth import get_current_technician, get_current_supervisor, get_current_custodian, get_current_admin
 from app.utils.email import send_release_email
 import asyncio
+
+from app.models.inventory import ProductsInventory
 
 
 router = APIRouter(prefix="/requests", tags=["Material Requests"])
@@ -110,15 +113,18 @@ def approve_request(mrf_id:int, db=db_dependency, current_user = Depends(get_cur
 
     # check if products have stock
     for item in request_for_approval.items:
-        product = db.query(Product).filter(
-            Product.id == item["product_id"]
-        ).first()
+        product = db.query(Product).filter(Product.id == item["product_id"]).first()
+        if product:
+            total_stock = db.query(func.sum(ProductsInventory.stock)).filter(
+                ProductsInventory.product_id == product.id
+            ).scalar() or 0
+            if total_stock < item["quantity"]:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Insufficient stock for product '{product.product_name}'. "
+                        f"Available: {total_stock}, Requested: {item['quantity']}"
+                )
 
-        if product and product.stock < item["quantity"]:
-             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Insufficient stock for product '{product.product_name}'. Available: {product.stock}, Requested: {item['quantity']}"
-            )
 
 
     # update content
