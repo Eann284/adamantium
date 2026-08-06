@@ -22,4 +22,4 @@ class ProductsInventory(Base):
 
     # relationship
     product = relationship("Product", back_populates="inventory")
-    add_stocks = relationship("Stock", back_populates="inventory")
+    add_stocks = relationship("Stock", back_populates="inventory", cascade="all, delete-orphan")

@@ -64,7 +64,6 @@ def test_create_product_success():
         json={
             "product_name": name,
             "product_image": "typec.jpg",
-            "stock": 200
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -74,7 +73,6 @@ def test_create_product_success():
     assert "id" in data
     assert data["product_name"] == name
     assert data["product_image"] == "typec.jpg"
-    assert data["stock"] == 200
 
     # Cleanup
     client.delete(f"/products/{data['id']}", headers={"Authorization": f"Bearer {admin_token}"})
@@ -92,7 +90,6 @@ def test_create_existing_product():
         json={
             "product_name": name,
             "product_image": "usb.jpg",
-            "stock": 100
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -106,7 +103,6 @@ def test_create_existing_product():
         json={
             "product_name": name,
             "product_image": "usb.jpg",
-            "stock": 100
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -126,7 +122,7 @@ def test_create_product_fail():
         json={
             "product_name": None,
             "product_image": "docking.jpg",
-            "stock": 200
+            
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -145,7 +141,7 @@ def test_create_product_as_non_admin():
         json={
             "product_name": "Test Adaptor",
             "product_image": "adaptor.jpg",
-            "stock": 200
+            
         },
         headers={"Authorization": f"Bearer {technician_token}"}
     )
@@ -167,7 +163,6 @@ def test_update_product_success():
         json={
             "product_name": name,
             "product_image": "wireless.jpg",
-            "stock": 200
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -180,7 +175,6 @@ def test_update_product_success():
         json={
             "product_name": f"{name} --EDITED",
             "product_image": "wireless.jpg",
-            "stock": 200
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -204,7 +198,6 @@ def test_update_nonexistent_product():
         json={
             "product_name": "Test Wireless Keyboard --EDITED",
             "product_image": "wireless.jpg",
-            "stock": 200
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -225,7 +218,6 @@ def test_update_product_as_non_admin():
         json={
             "product_name": name,
             "product_image": "wireless.jpg",
-            "stock": 200
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -241,7 +233,6 @@ def test_update_product_as_non_admin():
         json={
             "product_name": f"{name} --EDITED",
             "product_image": "wireless.jpg",
-            "stock": 200
         },
         headers={"Authorization": f"Bearer {technician_token}"}
     )
@@ -265,7 +256,7 @@ def test_delete_product_success():
         json={
             "product_name": name,
             "product_image": "asus.jpg",
-            "stock": 200
+           
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -347,7 +338,6 @@ def test_get_product_by_id():
         json={
             "product_name": name,
             "product_image": "dell.jpg",
-            "stock": 200
         },
         headers={"Authorization": f"Bearer {admin_token}"}
     )
@@ -365,7 +355,6 @@ def test_get_product_by_id():
     product_data = product.json()
     assert product_data["product_name"] == name
     assert product_data["product_image"] == "dell.jpg"
-    assert product_data["stock"] == 200
 
     # Cleanup
     client.delete(f"/products/{product_id}", headers={"Authorization": f"Bearer {admin_token}"})

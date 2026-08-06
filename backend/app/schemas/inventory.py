@@ -14,7 +14,7 @@ class AreaEnum(str, enum.Enum):
 
 
 class InventoryCreate(BaseModel):
-    id: int
+    product_id: int
     area: AreaEnum
     quantity: int
     wh_proof: Optional[str] = None
@@ -27,7 +27,7 @@ class InventoryUpdate(BaseModel):
 class InventoryResponse(BaseModel):
     id: int
     product_id: int
-    product_name: int
+    product_name: str
     area: AreaEnum
     stock: int
 
@@ -37,12 +37,12 @@ class InventoryResponse(BaseModel):
 
 class InventoryStockPerArea(BaseModel):
     product_id: int
-    product_name: int
+    product_name: str
     areas: list[dict]
 
 class TotalStockResponse(BaseModel):
     product_id: int
-    product_name: int
+    product_name: str
     total_stock: int
 
 
@@ -63,6 +63,12 @@ class AreaSummary(BaseModel):
     total_stock: int
     product_count: int
 
+class ProductStockByArea(BaseModel):
+    product_id: int
+    product_name: str
+    areas: list[dict]
+
+
 class InventorySummaryResponse(BaseModel):
     grand_total: int
     per_area: list[AreaSummary]
@@ -78,3 +84,4 @@ class StockHistoryResponse(BaseModel):
 
     class Config:
         from_attributes = True
+

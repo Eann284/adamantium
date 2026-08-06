@@ -50,7 +50,6 @@ def create_product(product: ProductCreate, db:Session = db_dependency, current_u
     new_product = Product(
         product_name = product.product_name,
         product_image = product.product_image,
-        stock = product.stock
     )
 
     db.add(new_product)
@@ -84,10 +83,6 @@ def update_product(product_id: int, product_update: ProductUpdate, db:Session = 
 
     if product_update.product_image is not None:
         product_to_update.product_image = product_update.product_image
-
-
-    if product_update.stock is not None:
-        product_to_update.stock = product_update.stock  
 
 
    

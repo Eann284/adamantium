@@ -4,8 +4,17 @@ from app.schemas.material_request import MaterialRequestResponse, MaterialReques
 from app.schemas.release import ReleaseResponse
 from app.schemas.logs import LogCreate, LogResponse
 from app.schemas.stock import StockCreate, StockResponse
+from app.schemas.inventory import (
+    InventoryCreate, InventoryResponse, 
+    InventoryStockPerArea, InventorySummaryResponse, 
+    InventoryUpdate,TotalStockResponse, 
+    AddStockResponse, AreaSummary, 
+    StockHistoryResponse, ProductStockByArea
+    ) 
+
 
 __all__ = [
+
     "UserCreate",
     "UserResponse", 
     "Token",
@@ -24,6 +33,16 @@ __all__ = [
     "LogCreate",
     "LogResponse",
     "StockCreate",
-    "StockResponse"
+    "StockResponse",
+    "InventoryCreate",
+    "InventoryResponse",
+    "InventoryStockPerArea",
+    "InventorySummaryResponse",
+    "InventoryUpdate",
+    "TotalStockResponse",
+    "AddStockResponse",
+    "AreaSummary",
+    "StockHistoryResponse",
+    "ProductStockByArea"
 
 ]

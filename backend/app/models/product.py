@@ -14,4 +14,4 @@ class Product(Base):
 
     releases = relationship("Release", back_populates="product")
     # add_stocks = relationship("Stock", back_populates="product")
-    inventory = relationship("ProductsInventory", back_populates="product")
+    inventory = relationship("ProductsInventory", back_populates="product", cascade="all, delete-orphan")
