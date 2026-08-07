@@ -31,7 +31,7 @@ router = APIRouter(prefix="/requests", tags=["Material Requests"])
 def create_request(request: Request, m_request: MaterialRequestCreate, db=db_dependency, current_user = Depends(get_current_technician)):
 
     for item in m_request.items:
-        product = db.query(Product).filter(Product.id == item.product_id).first()
+        product = db.query(Product.id).filter(Product.id == item.product_id).first()
 
         if not product:
            raise HTTPException(
@@ -114,7 +114,7 @@ def approve_request(request: Request, mrf_id:int, db=db_dependency, current_user
 
     # check if products have stock
     for item in request_for_approval.items:
-        product = db.query(Product).filter(Product.id == item["product_id"]).first()
+        product = db.query(Product.id, Product.product_name).filter(Product.id == item["product_id"]).first()
         if product:
             total_stock = db.query(func.sum(ProductsInventory.stock)).filter(
                 ProductsInventory.product_id == product.id
