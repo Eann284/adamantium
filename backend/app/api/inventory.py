@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from app.models.inventory import ProductsInventory, AreaEnum
 from app.schemas.inventory import (
     InventoryCreate,
@@ -13,9 +13,7 @@ from app.schemas.inventory import (
 from app.utils.auth import get_current_admin
 from app.models.product import Product
 from app.models.stock import Stock
-from app.schemas.stock import StockCreate, StockResponse
 from app.models.logs import Log
-from app.schemas.logs import LogCreate
 
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -24,11 +22,15 @@ from typing import List
 from app.utils.database import db_dependency
 from app.models.user import UserManager
 
+from app.utils.rate_limit import rate_limit
+
 router = APIRouter(prefix="/inventory", tags=["Products Inventory"])
 
 
 @router.post("/add", response_model=AddStockResponse, status_code=status.HTTP_201_CREATED)
+@rate_limit(10)
 def add_stock(
+    request: Request,
     data: InventoryCreate,
     db: Session = db_dependency,
     current_user: UserManager = Depends(get_current_admin)
