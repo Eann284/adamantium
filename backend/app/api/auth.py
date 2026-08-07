@@ -13,8 +13,6 @@ from app.utils.auth import (
     get_current_user
 )
 
-
-
 router= APIRouter(prefix = "/auth", tags=["Authentication"])
 
 

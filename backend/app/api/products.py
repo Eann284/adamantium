@@ -19,8 +19,19 @@ def get_products(
     limit:int = 100,
     db:Session = db_dependency
 ):
-    products = db.query(Product).offset(skip).limit(limit).all()
-    return products
+    products = db.query(
+        Product.id,
+        Product.product_name,
+        Product.product_image
+    ).offset(skip).limit(limit).all()
+    return [
+        {
+            "id": product.id,
+            "product_name": product.product_name,
+            "product_image": product.product_image,
+
+        } for product in products
+    ]
 
 # get product by id
 @router.get("/{product_id}", response_model = ProductResponse, status_code=status.HTTP_200_OK)

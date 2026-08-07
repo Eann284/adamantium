@@ -13,9 +13,6 @@ from app.database import engine, Base
 from app.api import auth_router, products_router, material_request_router, inventory_router
 
 
-
-
-
 # FastAPI itself
 app = FastAPI(
     title="Inventory Management System API",
@@ -28,7 +25,6 @@ app.state.limiter = limiter
 
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -37,9 +33,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-
 
 # Create all tables
 Base.metadata.create_all(bind=engine)

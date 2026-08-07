@@ -36,7 +36,7 @@ def add_stock(
     current_user: UserManager = Depends(get_current_admin)
 ):
     # check if product exists
-    product = db.query(Product).filter(
+    product = db.query(Product.id).filter(
         Product.id == data.product_id
     ).first()
 
@@ -103,7 +103,13 @@ def get_stock_by_area(
     db: Session = db_dependency,
     current_user = Depends(get_current_admin)
 ):
-    inventory = db.query(ProductsInventory).join(Product).filter(
+    inventory = db.query(
+        ProductsInventory.id,
+        ProductsInventory.product_id,
+        Product.product_name,
+        ProductsInventory.area,
+        ProductsInventory.stock
+    ).join(Product).filter(
         ProductsInventory.area == area
     ).all()
 
@@ -111,7 +117,7 @@ def get_stock_by_area(
         {
             "id": i.id,
             "product_id": i.product_id,
-            "product_name": i.product.product_name,
+            "product_name": i.product_name,
             "area": i.area,
             "stock": i.stock
         }
@@ -124,13 +130,19 @@ def get_all_inventory(
     db: Session = db_dependency,
     current_user = Depends(get_current_admin)
 ):
-    all_inventory = db.query(ProductsInventory).join(Product).all()
+    all_inventory = db.query(
+        ProductsInventory.id,
+        ProductsInventory.product_id,
+        Product.product_name,
+        ProductsInventory.area,
+        ProductsInventory.stock
+    ).join(Product).all()
 
     return [
         {
             "id": i.id,
             "product_id": i.product_id,
-            "product_name": i.product.product_name,
+            "product_name": i.product_name,
             "area": i.area,
             "stock": i.stock
         }
@@ -168,23 +180,23 @@ def get_stock_by_product(
     db: Session = db_dependency,
     current_user = Depends(get_current_admin)
 ):
-    product = db.query(Product).filter(
+    product = db.query(Product.id, Product.product_name).filter(
         Product.id == product_id
     ).first()
     if not product:
         raise HTTPException(status_code=404, detail="product not found") 
 
-    inventory = db.query(ProductsInventory).filter(
+    inventory = db.query(
+        ProductsInventory.area,
+        ProductsInventory.stock
+    ).filter(
         ProductsInventory.product_id == product_id
     ).all()
 
     return {
         "product_id": product_id,
         "product_name": product.product_name,
-        "areas": [
-            {"area": i.area, "stock": i.stock}
-            for i in inventory
-        ]
+        "areas": [{"area": i.area, "stock": i.stock} for i in inventory]
     }
 
 @router.get("/summary", response_model=InventorySummaryResponse, status_code=status.HTTP_200_OK)
