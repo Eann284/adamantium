@@ -55,6 +55,7 @@ jobs:
         env:
           DATABASE_URL: mysql+pymysql://root:rootpassword@localhost:3306/inventory
           SECRET_KEY: github_actions_test_secret
+          TEST_MODE: true
         run: |
           cd backend
           pytest tests/ -v

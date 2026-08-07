@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.utils.database import db_dependency
+from app.utils.rate_limit import rate_limit
 
 from app.models.user import UserManager
 from app.models.product import Product
@@ -13,12 +14,10 @@ from app.models.release import Release
 
 from app.schemas.material_request import (
     MaterialRequestCreate, MaterialRequestResponse,
-    RequestItem, ReleaseResponse
+    RequestItem
 )
 from app.utils.auth import get_current_technician, get_current_supervisor, get_current_custodian, get_current_admin
 from app.utils.email import send_release_email
-import asyncio
-
 from app.models.inventory import ProductsInventory
 
 
@@ -28,9 +27,10 @@ router = APIRouter(prefix="/requests", tags=["Material Requests"])
 
 # create request
 @router.post("/", response_model=MaterialRequestResponse, status_code=status.HTTP_201_CREATED)
-def create_request(request: MaterialRequestCreate, db=db_dependency, current_user = Depends(get_current_technician)):
+@rate_limit(10)
+def create_request(request: Request, m_request: MaterialRequestCreate, db=db_dependency, current_user = Depends(get_current_technician)):
 
-    for item in request.items:
+    for item in m_request.items:
         product = db.query(Product).filter(Product.id == item.product_id).first()
 
         if not product:
@@ -45,8 +45,8 @@ def create_request(request: MaterialRequestCreate, db=db_dependency, current_use
         date=datetime.now(),
         approval_status=ApprovalStatus.PENDING,
         release_status = ReleaseStatus.PENDING,
-        mrf_files = request.mrf_files,
-        items=[item.model_dump() for item in request.items],
+        mrf_files = m_request.mrf_files,
+        items=[item.model_dump() for item in m_request.items],
     )
 
     db.add(new_request)
@@ -96,7 +96,8 @@ def get_request_by_id(mrf_id: int, db=db_dependency, current_user = Depends(get_
 
 # APPROVING
 @router.put("/{mrf_id}/approve", response_model=MaterialRequestResponse)
-def approve_request(mrf_id:int, db=db_dependency, current_user = Depends(get_current_supervisor)):
+@rate_limit(10)
+def approve_request(request: Request, mrf_id:int, db=db_dependency, current_user = Depends(get_current_supervisor)):
 
     # get by id
     request_for_approval = db.query(MaterialRequest).filter(
@@ -139,7 +140,8 @@ def approve_request(mrf_id:int, db=db_dependency, current_user = Depends(get_cur
 
 # DISAPPROVING
 @router.put("/{mrf_id}/disapprove", response_model=MaterialRequestResponse)
-def disapprove_request(mrf_id:int, db=db_dependency, current_user=Depends(get_current_supervisor)):\
+@rate_limit(10)
+def disapprove_request(request: Request, mrf_id:int, db=db_dependency, current_user=Depends(get_current_supervisor)):\
 
     # get by id
     request_for_disapproval = db.query(MaterialRequest).filter(
@@ -168,7 +170,8 @@ def disapprove_request(mrf_id:int, db=db_dependency, current_user=Depends(get_cu
 
 # EDITING CONTENT
 @router.put("/{mrf_id}/edit", response_model=MaterialRequestResponse, status_code=status.HTTP_200_OK)
-def edit_content(mrf_id:int, edited_items: List[RequestItem], db=db_dependency, current_user = Depends(get_current_supervisor)):
+@rate_limit(10)
+def edit_content(request: Request, mrf_id:int, edited_items: List[RequestItem], db=db_dependency, current_user = Depends(get_current_supervisor)):
     # get by id
     request_to_edit = db.query(MaterialRequest).filter(
         MaterialRequest.mrf_id == mrf_id
@@ -245,7 +248,8 @@ def get_pending_release_by_id( mrf_id:int, db=db_dependency, current_user=Depend
 
 # release
 @router.put("/{mrf_id}/release", response_model=MaterialRequestResponse, status_code=status.HTTP_200_OK)
-def release_request(mrf_id:int, db=db_dependency, current_user=Depends(get_current_custodian)):
+@rate_limit(10)
+def release_request(request: Request, mrf_id:int, db=db_dependency, current_user=Depends(get_current_custodian)):
 
     # get by id
     request_to_release = db.query(MaterialRequest).filter(
@@ -321,7 +325,8 @@ def release_request(mrf_id:int, db=db_dependency, current_user=Depends(get_curre
     
 # reject
 @router.put("/{mrf_id}/reject", response_model=MaterialRequestResponse, status_code=status.HTTP_200_OK)
-def reject_request(mrf_id:int, db=db_dependency, current_user=Depends(get_current_custodian)):
+@rate_limit(10)
+def reject_request(request: Request, mrf_id:int, db=db_dependency, current_user=Depends(get_current_custodian)):
 
     # get by id
     request_to_reject = db.query(MaterialRequest).filter(

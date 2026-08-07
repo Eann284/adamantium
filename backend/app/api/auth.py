@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from datetime import timedelta
+from app.utils.rate_limit import rate_limit
 
 from app.database import get_db
 from app.models.user import UserManager
@@ -12,14 +12,15 @@ from app.utils.auth import (
     create_access_token,
     get_current_user
 )
-from app.config import settings
+
 
 
 router= APIRouter(prefix = "/auth", tags=["Authentication"])
 
 
 @router.post("/register", response_model = UserResponse)
-def register_user(user: UserCreate, db: Session = Depends(get_db)):
+@rate_limit(5)
+def register_user(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(UserManager).filter(UserManager.email == user.email).first()
 
     if existing_user:
@@ -47,7 +48,9 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 @router.post("/login", response_model = Token)
+@rate_limit(5)
 def login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
