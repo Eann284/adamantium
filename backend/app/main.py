@@ -50,14 +50,14 @@ class SecurityHeader(BaseHTTPMiddleware):
 
 app.add_middleware(SecurityHeader)
 
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=[
-        "localhost",
-        "127.0.0.1",
-        "testclient"
-    ]
-)
+# app.add_middleware(
+#     TrustedHostMiddleware,
+#     allowed_hosts=[
+#         "localhost",
+#         "127.0.0.1",
+#         "testclient"
+#     ]
+# )
 
 # Create all tables
 Base.metadata.create_all(bind=engine)
