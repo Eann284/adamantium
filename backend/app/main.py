@@ -48,7 +48,6 @@ class SecurityHeader(BaseHTTPMiddleware):
 
         return response
 
-
 app.add_middleware(SecurityHeader)
 
 app.add_middleware(
@@ -56,6 +55,7 @@ app.add_middleware(
     allowed_hosts=[
         "localhost",
         "127.0.0.1",
+        "testclient"
     ]
 )
 
