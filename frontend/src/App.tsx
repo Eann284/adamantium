@@ -2,7 +2,7 @@
 function App() {
   return (
     <div>
-      Inventory System
+      Inventory Management
     </div>
   )
 }
