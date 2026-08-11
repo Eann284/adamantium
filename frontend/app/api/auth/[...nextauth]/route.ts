@@ -12,6 +12,8 @@ const handler = NextAuth({
             },
             async authorize(credentials) {
                 if (!credentials?.email||!credentials?.password) {return null}
+
+                console.log('🔐 authorize called with:', credentials?.email)
                 
                 const formData = new URLSearchParams({
                     username: credentials.email,
@@ -32,14 +34,15 @@ const handler = NextAuth({
                 return null
                 }
 
+
                 return {
-                    id: data.user.id,
+                    id: String(data.user.id),
                     name: data.user.name,
                     email: data.user.email,
                     role: data.user.role,
                     area: data.user.area,
                     accessToken: data.access_token,
-                    }
+                }
 
             }
         })
@@ -50,13 +53,21 @@ const handler = NextAuth({
                 token.accessToken = user.accessToken
                 token.role = user.role
                 token.area = user.area
+                token.name = user.name
+                token.email = user.email
             }
+
+            console.log(token)
+
             return token
         },
         async session({ session, token }) {
         session.user.role = token.role as string
         session.user.area = token.area as string
         session.user.accessToken = token.accessToken as string
+        session.user.name = token.name as string   
+        session.user.email = token.email as string
+        console.log(session)
         return session
         },
     },
