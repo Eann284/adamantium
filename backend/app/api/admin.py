@@ -32,8 +32,8 @@ def get_dash(db: Session = db_dependency, current_user = Depends(get_current_adm
 @router.get("/users", response_model=List[UserResponse])
 def get_all_users(
     db: Session = db_dependency,
+    skip: int = 0, limit:int = 10,
     current_user = Depends(get_current_admin)
 ):
-    """Get all users (admin only)"""
-    users = db.query(UserManager).all()
+    users = db.query(UserManager).offset(skip).limit(limit).all()
     return users

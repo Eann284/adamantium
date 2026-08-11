@@ -1,7 +1,7 @@
 import { User } from "../types/user";
 
 
-export async function getUsers(accessToken: string): Promise<User> {
+export async function getUsers(accessToken: string): Promise<User[]> {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users`,{
         headers: {
             Authorization: `Bearer ${accessToken}`,
