@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # * Modules
 from app.database import engine, Base
-from app.api import auth_router, products_router, material_request_router, inventory_router
+from app.api import auth_router, products_router, material_request_router, inventory_router, admin_router
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
@@ -67,6 +67,7 @@ app.include_router(auth_router)
 app.include_router(products_router)
 app.include_router(material_request_router)
 app.include_router(inventory_router)
+app.include_router(admin_router)
 
 @app.get("/")
 async def root():
