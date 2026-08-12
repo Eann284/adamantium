@@ -1,8 +1,8 @@
 import React from 'react'
-import { Request } from '@/src/types/materialRequest'
+import { MaterialRequest } from '@/src/types/materialRequest'
 
 interface Props {
-    requests: Request[]
+    requests: MaterialRequest[]
 }
 
 function RequestsView({requests}: Props) {
@@ -20,8 +20,5 @@ function RequestsView({requests}: Props) {
   )
 }
 
-interface Props {
-    requests: Request[]
-}
 
 export default RequestsView

@@ -32,7 +32,7 @@ class MaterialRequestResponse(BaseModel):
     approved_by: Optional[str]
     release_status: ReleaseStatusEnum
     released_by: Optional[str]
-    mrf_files: str
+    mrf_files: Optional[str] = None
     items: List[dict]
 
     class Config:

@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth";
 import { User } from "@/src/types/user";
 import Users from "@/src/components/dashboard/Users";
 import InventorgyView from "@/src/components/dashboard/InventoryView";
-import { getAllRequests } from "@/src/services/requestService";
 import RequestsView from "@/src/components/dashboard/RequestsView";
 import { getProducts } from "@/src/services/productsService";
 import AllProducts from "@/src/components/dashboard/Tabs/AllProducts";
@@ -29,7 +28,6 @@ async function page() {
 
     const users = await getUsers(session.user.accessToken);
     const inventory = await getAllInventory(session.user.accessToken);
-    const requests = await getAllRequests(session.user.accessToken);
 
     const products = await getProducts(session.user.accessToken);
 
