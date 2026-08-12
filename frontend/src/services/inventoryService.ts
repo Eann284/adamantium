@@ -39,7 +39,8 @@ export async function getAllInventory(
 }
 
 export async function getTotalProductsStock(accessToken: string, product_id: number): Promise<ProductStockByArea>{
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/product/${product_id}`,
+    const response = await fetch(`
+        ${process.env.NEXT_PUBLIC_API_URL}/inventory/product/${product_id}`,
        { headers: {
             Authorization: `Bearer ${accessToken}`
         }}

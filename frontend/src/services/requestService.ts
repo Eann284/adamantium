@@ -1,17 +1,20 @@
-import type { Request } from "../types/materialRequest";
+import type { MRF } from "../types/materialRequest";
 
+export async function createMaterialRequest(
+    accessToken: string,
+    data: MRF
+) {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requests/`, {
+        method: 'POST',
+        headers: {
+            "Content-Type":"application/json",
+            Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(data),
+    });
 
-export async function getAllRequests(accessToken: string): Promise<Request[]> {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requests/all`,
-        {
-            headers:{
-                Authorization: `Bearer ${accessToken}`
-            }
-        }
-        
-    )
     if (!response.ok) {
-        throw new Error("Failed to fetch requests");
+        throw new Error ("Failed to Create Request");
     }
 
     return response.json()
