@@ -16,7 +16,7 @@ router = APIRouter(prefix="/products", tags=["Products"])
 @router.get("/", response_model = List[ProductResponse], status_code=status.HTTP_200_OK)
 def get_products(
     skip: int = 0,
-    limit:int = 100,
+    limit:int = 10,
     db:Session = db_dependency
 ):
     products = db.query(

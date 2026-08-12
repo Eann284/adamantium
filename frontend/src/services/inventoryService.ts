@@ -1,4 +1,4 @@
-import { Inventory, InventorySummary } from "../types/inventory";
+import { Inventory, InventorySummary, AllProductStockByArea, StockByArea, ProductStockByArea } from "../types/inventory";
 
 export async function getInventory(
     accessToken:string
@@ -33,6 +33,20 @@ export async function getAllInventory(
     );
     if (!response.ok) {
         throw new Error("Failed to fetch inventory items");
+    }
+
+    return response.json()
+}
+
+export async function getTotalProductsStock(accessToken: string, product_id: number): Promise<ProductStockByArea>{
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/inventory/product/${product_id}`,
+       { headers: {
+            Authorization: `Bearer ${accessToken}`
+        }}
+    )
+
+    if (!response.ok) {
+        throw new Error (`Failed to Get Product Stock of ${product_id}`)
     }
 
     return response.json()

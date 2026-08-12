@@ -18,3 +18,16 @@ export interface Inventory {
     stock: number
 }
     
+
+export interface StockByArea {
+  area: string;
+  stock: number;
+}
+
+export interface ProductStockByArea {
+  product_id: number;
+  product_name: string;
+  areas: StockByArea[];
+}
+
+export type AllProductStockByArea = ProductStockByArea[];
