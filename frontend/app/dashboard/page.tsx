@@ -2,15 +2,15 @@ import { getDashboard } from "@/src/services/dashboardService"
 import { getAllInventory, getInventory, getTotalProductsStock } from "@/src/services/inventoryService";
 import { getUsers } from "@/src/services/userService";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/authOptions";
 import { User } from "@/src/types/user";
 import Users from "@/src/components/dashboard/Users";
-import InventoryView from "@/src/components/dashboard/InventoryView";
+import InventorgyView from "@/src/components/dashboard/InventoryView";
 import { getAllRequests } from "@/src/services/requestService";
 import RequestsView from "@/src/components/dashboard/RequestsView";
 import { getProducts } from "@/src/services/productsService";
 import AllProducts from "@/src/components/dashboard/Tabs/AllProducts";
 import ProductStockView from "@/src/components/dashboard/Tabs/ProductStock";
+import { authOptions } from "../../src/lib/authOptions";
 
 
 async function page() {
