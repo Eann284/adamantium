@@ -12,13 +12,18 @@ function Users(
     
   return (
     <section>
-      {users.map(user=>(
-        <div key={user.id}>
-            <h1>{user.name}</h1>
-            <h1>{user.email}</h1>
 
-        </div>
+      <input type="text" placeholder='search' className='px-2 w-full ring ring-gray-400 rounded-lg'/>
+      <table className='w-full'>
+
+      {users.map(user=>(
+        <tr key={user.id}>
+            <td>{user.name}</td>
+            <td>{user.email}</td>
+
+        </tr>
       ))}
+      </table>
     </section>
   )
 }

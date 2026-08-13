@@ -68,6 +68,11 @@ def login(
         data={"sub": user.email, "role": user.role}
     )
 
+    print(f"User: {user.name}")
+    print(f"Email: {user.email}")
+    print(f"Token: {access_token}")
+
+
     return {"access_token": access_token, "token_type": "bearer", "user":user}
 
 
