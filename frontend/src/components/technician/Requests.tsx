@@ -32,12 +32,16 @@ function Requests({requests}:Props) {
                     <th>Item</th>
                     <th>Quantity</th>
                 </thead>
+
+            <tbody>
+
             {req.items.map(item=>(
                 <tr key={item.product_id} className='col-span-2'>
                     <td>Product {item.product_id}</td>
                     <td>{item.quantity}</td>
                 </tr>
             ))}
+            </tbody>
             </table>
             </section>
         </div>
