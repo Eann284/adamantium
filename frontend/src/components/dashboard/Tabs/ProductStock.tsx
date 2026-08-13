@@ -11,7 +11,7 @@ interface Props {
   accessToken: string
 }
 
-function ProductStockView({stock, products, accessToken}: Props) {
+function ProductStockView({products, accessToken}: Props) {
 
   const [productId, setProductId] = useState<number|null>(null);
   const [productStock, setProductStock] = useState<ProductStockByArea|null>(null);
@@ -37,12 +37,14 @@ function ProductStockView({stock, products, accessToken}: Props) {
 
   return (
     <div>
-      
+  
       <div>
 
-        <select name="" id=""
+        <section className='grid grid-cols-2 gap-3'>
+
+        <select name="" id="" className='ring ring-gray-400 w-full'
         value={productId ?? ""}
-          onChange={(e)=> {
+        onChange={(e)=> {
             setProductId(Number(e.target.value))
           }}
         >
@@ -55,23 +57,26 @@ function ProductStockView({stock, products, accessToken}: Props) {
           ))}
         </select>
 
-        <button onClick={handleViewStock}>
-          View
+        <button onClick={handleViewStock} className='bg-blue-500 rounded-md text-white font-bold'>
+          View Stock
         </button>
+        </section>
 
 
         {productStock && (
-          <div>
-          <h2>{productStock.product_name}</h2>
+          <div className=''>
+            <h2 className='text-lg font-semibold'>Stock for {productStock.product_name}</h2>
 
-          {productStock.areas.map((area) => (
-            <div key={area.area}>
-              <span>
-                {area.area} - {area.stock}
-              </span>
-            </div>  
-          ))}
-        </div>
+            <table className='ring ring-gray-400 w-full table-fixed divide-gray-400'>
+
+            {productStock.areas.map((area) => (
+              <tr key={area.area}>
+                <td className='px-1 font-semibold'>{area.area}</td>
+                <td>{area.stock}</td>
+              </tr>  
+            ))}
+            </table>
+          </div>
         )}
       </div>
     </div>

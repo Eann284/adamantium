@@ -83,9 +83,8 @@ function MaterialRequestForm({accessToken, products}:Props) {
 
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-3">
+      <div className="relative flex flex-col">
         <label htmlFor="">Product</label>
         <input type="text" 
                 value={search}
@@ -94,10 +93,12 @@ function MaterialRequestForm({accessToken, products}:Props) {
                     setSelectedProduct(null)
                 }}
                 placeholder="search here"
+                className="ring ring-gray-400 px-2 rounded-md"
+                
         />
 
         {search && !selectedProduct && (
-            <div>
+            <div className="absolute top-11 w-full bg-white flex flex-col ring-1 rounded-md mt-2">
                 {filteredProducts.map((product)=>(
                     <button
                         type="button"
@@ -106,28 +107,45 @@ function MaterialRequestForm({accessToken, products}:Props) {
                             setSelectedProduct(product);
                             setSearch(product.product_name)
                         }}
+                        className="text-left px-2"
                     >
                         {product.product_name}
                     </button>
                 ))}
+
             </div>
         )}
-
-
       </div>
 
-      <div>
+      <div className="flex flex-col">
         <label>Quantity</label>
 
         <input
           type="number"
           value={quantity}
           onChange={(e) => setQuantity(e.target.value)}
+          className="ring ring-gray-400 px-2 rounded-md"
         />
+
+        <button className="mt-3 ring-2 ring-blue-600 text-blue-700 rounded-md" type="button" onClick={handleAddItem}>
+            Add Item
+        </button>
       </div>
 
+      
+
       <div>
-  <h3>Selected Items</h3>
+
+
+    <div className="flex flex-row justify-between">
+        <h3>Items for Request <span>{items.length}</span></h3>
+
+        {items.length > 0 ? 
+        <button onClick={()=>{setItems([])}}>Reset</button>: "No Items"}
+    </div>
+
+
+    <section>
 
     {items.map((item, index) => {
         const product = products.find(
@@ -135,7 +153,8 @@ function MaterialRequestForm({accessToken, products}:Props) {
         );
 
         return (
-        <div key={index}>
+
+        <div className="grid grid-cols-2" key={index}>
             <span>
             {product?.product_name}
             </span>
@@ -143,17 +162,22 @@ function MaterialRequestForm({accessToken, products}:Props) {
             <span>
             {item.quantity}
             </span>
+        
         </div>
+
+
         );
     })}
+    
+    </section>
     </div>
 
-      <button type="button" onClick={handleAddItem}>
-        Add Item
-      </button>
-      <button type="submit">
+    <section className="flex flex-col gap-2">
+      
+      <button className="ring-2 bg-blue-600 text-white rounded-md" type="submit">
         Submit MRF
       </button>
+    </section>
     </form>
   )
 }
