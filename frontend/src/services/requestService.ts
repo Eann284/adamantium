@@ -68,7 +68,7 @@ export async function getPendingRequests(accessToken: string): Promise<MaterialR
 
 
 // get pending by ID
-export async function getPendingRequestsById(accessToken: string, mrf_id: number): Promise<MaterialRequest[]>{
+export async function getPendingRequestsById(accessToken: string, mrf_id: number): Promise<MaterialRequest>{
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requests/pending/${mrf_id}`,
         {
             headers: {
