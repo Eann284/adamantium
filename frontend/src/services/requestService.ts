@@ -1,4 +1,4 @@
-import type { MRF } from "../types/materialRequest";
+import type { MRF, MRFItem } from "../types/materialRequest";
 import type { MaterialRequest } from "../types/materialRequest";
 
 export async function createMaterialRequest(
@@ -121,6 +121,25 @@ export async function disapproveRequest(
 
     if (!response.ok) {
         throw new Error("Failed to approve request");
+    }
+
+    return response.json();
+}
+
+export async function editRequest(accessToken: string, mrf_id: number, items: MRFItem[]){
+    const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/requests/${mrf_id}/edit`,
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(items),
+        }
+    );
+    if (!response.ok) {
+        throw new Error(`Failed to edit request ${mrf_id}`);
     }
 
     return response.json();

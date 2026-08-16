@@ -1,7 +1,7 @@
 "use client";
 import { approveRequest, disapproveRequest } from "@/src/services/requestService";
 import { MaterialRequest } from "@/src/types/materialRequest";
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 
@@ -11,6 +11,7 @@ interface Props {
 }
 
 function RequestDetails({ request, accessToken }: Props) {
+
 
     
   if (!request) {
@@ -54,7 +55,7 @@ function RequestDetails({ request, accessToken }: Props) {
 
     <section>
 
-      <p>Requested by: {request.requestor_email}</p>
+      <p>Requested by: {request.requestor_email}<span></span></p>
       <p>Approval Status: {request.approval_status}</p>
       {/* <p>{request.release_status}</p> */}
 

@@ -13,7 +13,7 @@ function PendingList({pendingRequests, onView}:Props) {
       <ul>
         {pendingRequests.map(req=>(
             <li key={req.mrf_id}>
-               <RequestCard requests={req} onView={onView}/>
+               <RequestCard requests={req} onView={()=>onView(req)}/>
             </li>
         ))}
       </ul>

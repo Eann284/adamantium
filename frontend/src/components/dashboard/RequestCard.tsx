@@ -3,7 +3,7 @@ import React from 'react'
 
 interface Props {
     requests: MaterialRequest;
-    onView: (request: MaterialRequest)=>void
+    onView: ()=>void
 }
 
 function RequestCard({requests, onView}:Props) {
@@ -12,7 +12,7 @@ function RequestCard({requests, onView}:Props) {
     <div key={requests.mrf_id} className='border'>
       <h1>MRF-{requests.mrf_id} - {requests.requestor_email}</h1>
       <div>{requests.approval_status}</div>
-      <button onClick={()=>onView(requests)}>View</button>
+      <button onClick={onView}>View</button>
       {/* <ul>
         {requests.items.map((item)=>(
             <li key={item.product_id}>
