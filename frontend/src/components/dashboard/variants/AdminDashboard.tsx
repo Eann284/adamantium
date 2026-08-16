@@ -1,5 +1,5 @@
 
-import { getServerSession } from "next-auth";
+import { getServerSession, Session } from "next-auth";
 import { authOptions } from "@/src/lib/authOptions";
 import { getDashboard } from "@/src/services/dashboardService";
 import { getUsers } from "@/src/services/userService";
@@ -14,9 +14,13 @@ import DataCard from "../DataCard";
 import InventoryView from "../InventoryView";
 
 
-async function AdminDashboard() {
+interface Props {
+  session: Session
+}
 
-    const session = await getServerSession(authOptions);
+async function AdminDashboard({session}:Props) {
+
+    // const session = await getServerSession(authOptions);
 
     if (!session?.user?.accessToken) {
         throw new Error("Unauthorized");

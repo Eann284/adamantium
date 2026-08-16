@@ -1,4 +1,5 @@
 import AdminDashboard from '@/src/components/dashboard/variants/AdminDashboard';
+import SupervisorDashboard from '@/src/components/dashboard/variants/SupervisorDashboard';
 import TechnicianDashboard from '@/src/components/dashboard/variants/TechnicianDashboard.tsx';
 import { authOptions } from '@/src/lib/authOptions'
 import { getServerSession } from 'next-auth'
@@ -10,10 +11,13 @@ async function page() {
 
   switch (session?.user.role) {
     case "Admin":
-      return <AdminDashboard/>;
+      return <AdminDashboard session={session}/>;
 
     case "Technician":
-      return <TechnicianDashboard/>
+      return <TechnicianDashboard session={session}/>
+
+    case "Supervisor":
+      return <SupervisorDashboard session={session}/>
   }
   
 }
