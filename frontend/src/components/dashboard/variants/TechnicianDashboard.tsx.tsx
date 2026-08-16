@@ -1,5 +1,5 @@
 import React from 'react'
-import { getServerSession } from 'next-auth'
+import { getServerSession, Session } from 'next-auth'
 import { getProducts } from '@/src/services/productsService'
 import { authOptions } from '@/src/lib/authOptions'
 import { getSentRequests } from '@/src/services/requestService'
@@ -8,9 +8,13 @@ import NameCard from '../../technician/NameCard'
 import Requests from '../../technician/Requests'
 
 
-async function TechnicianDashboard() {
+interface Props {
+  session: Session
+}
 
-    const session = await getServerSession(authOptions);
+async function TechnicianDashboard({session}:Props) {
+
+    // const session = await getServerSession(authOptions);
 
     const name = session?.user.name?.toString() ?? ""
     const role = session?.user.role?.toString() ?? ""
