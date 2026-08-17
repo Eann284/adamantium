@@ -1,46 +1,47 @@
 "use client";
-import { approveRequest, disapproveRequest } from "@/src/services/requestService";
+import { approveRequest, disapproveRequest, rejectRequest, releaseRequest } from "@/src/services/requestService";
 import { MaterialRequest } from "@/src/types/materialRequest";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 
 interface Props {
-  request: MaterialRequest | null;
+  release: MaterialRequest | null;
   accessToken: string
 }
 
-function RequestDetails({ request, accessToken }: Props) {
+function ReleaseDetails({ release, accessToken }: Props) {
 
 
     
-  if (!request) {
+  if (!release) {
     return <div>Select a request</div>;
   }
 
 
-  const handleApprove = async() => {
+  const handleRelease = async() => {
+    console.log("Release button clicked");
     try {
-        await approveRequest(
+        await releaseRequest(
             accessToken,
-            request.mrf_id
+            release.mrf_id
         );
     } catch (error) {
         console.error(error)
     } finally {
-        toast.success('Approved')
+        toast.success('Released')
     }
 }
-  const handleDispprove = async() => {
+  const handleReject = async() => {
     try {
-        await disapproveRequest(
+        await rejectRequest(
             accessToken,
-            request.mrf_id
+            release.mrf_id
         );
     } catch (error) {
         console.error(error)
     } finally {
-        toast.success('Dispproved')
+        toast.success('Rejected')
     }
 }
 
@@ -49,21 +50,21 @@ function RequestDetails({ request, accessToken }: Props) {
   return (
     <div className="ring ring-gray-400 p-4 flex flex-col grow rounded-lg">
         
-    <h2 className="text-xl font-semibold">MRF-{request.mrf_id}</h2>
+    <h2 className="text-xl font-semibold">MRF-{release.mrf_id}</h2>
 
     <div className="flex flex-row justify-between">
 
     <section>
 
-      <p>Requested by: {request.requestor_email}<span></span></p>
-      <p>Approval Status: {request.approval_status}</p>
+      <p>Requested by: {release.requestor_email}<span></span></p>
+      <p>Approval Status: {release.approval_status}</p>
       {/* <p>{request.release_status}</p> */}
 
         <section>
         <h1 className="font-semibold">Items:</h1>
 
         <div>
-        {request.items.map((item, index) => (
+        {release.items.map((item, index) => (
             <div key={index}>
             Product {item.product_id}
             {" - "}
@@ -76,8 +77,8 @@ function RequestDetails({ request, accessToken }: Props) {
 
 
       <section className="flex flex-row gap-3 h-10">
-        <button onClick={handleApprove}className="size-15 bg-green-500 font-semibold text-white ring rounded-full" type="button">Approve</button>
-        <button onClick={handleDispprove}className="size-15 bg-red-500 font-semibold text-white ring rounded-full" type="button">Disapprove</button>
+        <button onClick={handleRelease}className="size-15 bg-green-500 font-semibold text-white ring rounded-full"  type="button">Release</button>
+        <button onClick={handleReject}className="size-15 bg-red-500 font-semibold text-white ring rounded-full"  type="button">Reject</button>
       </section>
     </div>
 
@@ -85,4 +86,4 @@ function RequestDetails({ request, accessToken }: Props) {
   );
 }
 
-export default RequestDetails;
+export default ReleaseDetails;

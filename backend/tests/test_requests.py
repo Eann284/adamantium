@@ -468,7 +468,7 @@ def test_custodian_reject_request():
 
     assert response.status_code == 200
     data = response.json()
-    assert data["release_status"] == "Pending"
+    assert data["release_status"] == "Not Released"
 
     delete_product(p1_id, admin_token)
 

@@ -144,3 +144,76 @@ export async function editRequest(accessToken: string, mrf_id: number, items: MR
 
     return response.json();
 }
+
+
+export async function getPendingReleases(accessToken:string):Promise<MaterialRequest[]> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requests/release/pending`,
+        {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
+    );
+
+     if (!response.ok) {
+        throw new Error("Failed to get pending releases");
+    }
+
+    return response.json();
+}
+
+export async function getPendingReleaseById(accessToken:string, mrf_id:number): Promise<MaterialRequest> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requests/release/pending/${mrf_id}`,
+        {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
+    );
+
+     if (!response.ok) {
+        throw new Error(`Failed to get pending release ${mrf_id}`);
+    }
+
+    return response.json();
+}
+
+
+export async function releaseRequest(accessToken:string, mrf_id:number) {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requests/${mrf_id}/release`,
+        {
+            method: 'PUT',
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+
+            },
+        }
+    );
+
+     if (!response.ok) {
+        throw new Error(`Failed to release ${mrf_id}`);
+    }
+
+    return response.json();
+}
+
+
+export async function rejectRequest(accessToken:string, mrf_id:number) {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requests/${mrf_id}/reject`,
+        {
+            method: 'PUT',
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+
+            },
+        }
+    );
+
+     if (!response.ok) {
+        throw new Error(`Failed to reject ${mrf_id}`);
+    }
+
+    return response.json();
+}

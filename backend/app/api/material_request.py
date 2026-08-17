@@ -226,7 +226,8 @@ def get_approved(db=db_dependency, current_user = Depends(get_current_custodian)
 @router.get("/release/pending", response_model=List[MaterialRequestResponse])
 def get_pending_releases(db=db_dependency, current_user = Depends(get_current_custodian)):
     pending_releases = db.query(MaterialRequest).filter(
-        MaterialRequest.approval_status == ApprovalStatus.APPROVED
+        MaterialRequest.approval_status == ApprovalStatus.APPROVED,
+        MaterialRequest.release_status == ReleaseStatus.PENDING
     ).all()
 
     return pending_releases
@@ -251,6 +252,14 @@ def get_pending_release_by_id( mrf_id:int, db=db_dependency, current_user=Depend
 @rate_limit(10)
 def release_request(request: Request, mrf_id:int, db=db_dependency, current_user=Depends(get_current_custodian)):
 
+
+    print("RELEASE HIT")
+    print("MRF:", mrf_id)
+    print("USER:", current_user.email)
+
+    print(f"RELEASE ROUTE HIT: {mrf_id}")
+
+
     # get by id
     request_to_release = db.query(MaterialRequest).filter(
         MaterialRequest.mrf_id == mrf_id
@@ -264,6 +273,7 @@ def release_request(request: Request, mrf_id:int, db=db_dependency, current_user
 
      # Check if already released
     if request_to_release.release_status == ReleaseStatus.RELEASED:
+        print("Already released")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="This request has already been released"
@@ -271,6 +281,7 @@ def release_request(request: Request, mrf_id:int, db=db_dependency, current_user
     
     # Check if approved
     if request_to_release.approval_status != ApprovalStatus.APPROVED:
+        print("Not approved")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only approved requests can be released"
@@ -355,7 +366,7 @@ def reject_request(request: Request, mrf_id:int, db=db_dependency, current_user=
 
     # update content
 
-    request_to_reject.release_status = ReleaseStatus.PENDING
+    request_to_reject.release_status = ReleaseStatus.NOT_RELEASED
 
 
 
