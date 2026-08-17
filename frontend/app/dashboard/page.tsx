@@ -1,4 +1,5 @@
 import AdminDashboard from '@/src/components/dashboard/variants/AdminDashboard';
+import CustodianDashboard from '@/src/components/dashboard/variants/CustodianDashboard';
 import SupervisorDashboard from '@/src/components/dashboard/variants/SupervisorDashboard';
 import TechnicianDashboard from '@/src/components/dashboard/variants/TechnicianDashboard.tsx';
 import { authOptions } from '@/src/lib/authOptions'
@@ -18,7 +19,12 @@ async function page() {
 
     case "Supervisor":
       return <SupervisorDashboard session={session}/>
+
+    case "Custodian":
+      return <CustodianDashboard session={session}/>
+    
   }
+
   
 }
 

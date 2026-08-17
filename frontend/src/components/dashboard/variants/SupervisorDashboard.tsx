@@ -1,8 +1,6 @@
 import { getPendingRequests } from '@/src/services/requestService'
 import { Session } from 'next-auth';
 import React from 'react'
-import RequestCard from '../RequestCard';
-import PendingList from '../PendingList';
 import SupervisorClient from '../SupervisorClient';
 
 
