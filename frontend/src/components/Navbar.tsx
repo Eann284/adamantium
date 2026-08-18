@@ -1,9 +1,14 @@
+import { Session } from 'next-auth'
 import React from 'react'
 
-function Navbar() {
+interface Props {
+  session: Session | null;
+}
+
+function Navbar({session}:Props) {
   return (
-    <nav>
-      
+    <nav className='bg-blue-500 h-12 p-3'>
+      <h1>Hello, {session?.user.email}</h1>
     </nav>
   )
 }

@@ -9,7 +9,7 @@ interface Props {
 
 function PendingList({pendingRequests, onView}:Props) {
   return (
-   <section className='ring ring-gray-400 p-4 h-full overflow-y-auto min-h-0'>
+   <section className='ring ring-gray-400 p-4 overflow-y-auto h-full min-h-0'>
       <ul>
         {pendingRequests.map(req=>(
             <li key={req.mrf_id}>

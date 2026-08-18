@@ -16,8 +16,8 @@ function SupervisorClient({pending, accessToken}:Props) {
 
     
   return (
-    <div>
-      <main className='flex flex-col h-screen p-4 gap-2'>
+    
+      <main className='h-full flex flex-col p-4 gap-2'>
         
     <div className='grid 
       grid-cols-2 gap-2 flex-1 min-h-0
@@ -36,10 +36,8 @@ function SupervisorClient({pending, accessToken}:Props) {
     </section>
 
 </div>
-
-
     </main>
-    </div>
+
   )
 }
 

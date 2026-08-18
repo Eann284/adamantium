@@ -26,12 +26,8 @@ async function TechnicianDashboard({session}:Props) {
     const products = await getProducts(session.user.accessToken);
     const requests = await getSentRequests(session.user.accessToken)
   return (
-    <main className='flex flex-col h-screen p-4 gap-2'>
-      
-      <div className='flex items-center justify-center'>
-        <h1 className='ring w-full text-center'>Technician Dashboard</h1>
-      </div>
-
+    <main className='h-full flex flex-col p-4 gap-2'>
+    
       <div>
         <NameCard name={name} role={role}/>
       </div>

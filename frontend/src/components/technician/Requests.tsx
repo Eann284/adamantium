@@ -29,8 +29,10 @@ function Requests({requests}:Props) {
 
             <table className='table-fixed w-full'>
                 <thead className='text-left'>
-                    <th>Item</th>
-                    <th>Quantity</th>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                    </tr>
                 </thead>
 
             <tbody>
