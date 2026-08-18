@@ -6,41 +6,45 @@ import { useState } from "react";
 import RequestDetails from "./RequestDetails";
 
 interface Props {
-    pending: MaterialRequest[];
-    accessToken: string
+  pending: MaterialRequest[];
+  accessToken: string;
 }
 
-function SupervisorClient({pending, accessToken}:Props) {
+function SupervisorClient({ pending, accessToken }: Props) {
+  const [selectedRequest, setSelectedRequest] =
+    useState<MaterialRequest | null>(null);
 
-    const [selectedRequest, setSelectedRequest] = useState<MaterialRequest |null>(null)
-
-    
   return (
-    <div>
-      <main className='flex flex-col h-screen p-4 gap-2'>
-        
-    <div className='grid 
-      grid-cols-2 gap-2 flex-1 min-h-0
-      '>
+    
+      <main className="h-full flex flex-col p-4 gap-2">
+        <div
+          className="grid 
+        grid-cols-2 gap-2 flex-1 min-h-0
+        "
+        >
+          {/* left panel */}
+          <section className="min-h-0">
+            <PendingList
+              pendingRequests={pending}
+              onView={setSelectedRequest}
+            />
+          </section>
 
-    {/* left panel */}
-    <PendingList pendingRequests={pending} onView={setSelectedRequest}/>
+          {/* right panel split vertically */}
 
-    {/* right panel split vertically */}
-
-    <section className='ring ring-gray-400 grid grid-cols-1 p-2'>
-        <div  className="p-2 h-70 overflow-y-auto min-h-0">
-            <RequestDetails request={selectedRequest} accessToken={accessToken}/>
+          <section className="ring ring-gray-400 grid grid-cols-1 p-2">
+            <div className="p-2 overflow-y-auto min-h-0">
+              <RequestDetails
+                request={selectedRequest}
+                accessToken={accessToken}
+              />
+            </div>
+            <div>bottom</div>
+          </section>
         </div>
-        <div>bottom</div>
-    </section>
-
-</div>
-
-
-    </main>
-    </div>
-  )
+      </main>
+  
+  );
 }
 
-export default SupervisorClient
+export default SupervisorClient;
