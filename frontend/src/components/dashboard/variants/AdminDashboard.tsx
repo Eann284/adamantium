@@ -1,9 +1,11 @@
-
 import { getServerSession, Session } from "next-auth";
 import { authOptions } from "@/src/lib/authOptions";
 import { getDashboard } from "@/src/services/dashboardService";
 import { getUsers } from "@/src/services/userService";
-import { getAllInventory, getTotalProductsStock } from "@/src/services/inventoryService";
+import {
+  getAllInventory,
+  getTotalProductsStock,
+} from "@/src/services/inventoryService";
 import { getProducts } from "@/src/services/productsService";
 import AllProducts from "../Tabs/AllProducts";
 import ProductStockView from "../Tabs/ProductStock";
@@ -12,84 +14,76 @@ import RequestsView from "../RequestsView";
 import { getAllRequests } from "@/src/services/requestService";
 import DataCard from "../DataCard";
 import InventoryView from "../InventoryView";
-
+import ProductsView from "../ProductsView";
 
 interface Props {
-  session: Session
+  session: Session;
 }
 
-async function AdminDashboard({session}:Props) {
+async function AdminDashboard({ session }: Props) {
+  // const session = await getServerSession(authOptions);
 
-    // const session = await getServerSession(authOptions);
+  if (!session?.user?.accessToken) {
+    throw new Error("Unauthorized");
+  }
 
-    if (!session?.user?.accessToken) {
-        throw new Error("Unauthorized");
-    }
+  const dashboard = await getDashboard(session.user.accessToken);
 
-    const dashboard = await getDashboard(session.user.accessToken);
+  // todo: revisit this later
+  // const inventory = await getInventory(session.user.accessToken);
 
+  const users = await getUsers(session.user.accessToken);
+  const inventory = await getAllInventory(session.user.accessToken);
 
-    // todo: revisit this later
-    // const inventory = await getInventory(session.user.accessToken);
+  const products = await getProducts(session.user.accessToken);
 
-    const users = await getUsers(session.user.accessToken);
-    const inventory = await getAllInventory(session.user.accessToken);
+  const productStock = await getTotalProductsStock(
+    session.user.accessToken,
+    products[0].id,
+  );
 
-    const products = await getProducts(session.user.accessToken);
+  const requests = await getAllRequests(session.user.accessToken);
 
-    const productStock = await getTotalProductsStock(
-      session.user.accessToken,
-      products[0].id
-    )
-
-    const requests = await getAllRequests(session.user.accessToken);
-
-    // todo: api calls for per area stuff?
-    // ? inventory history?
-
+  // todo: api calls for per area stuff?
+  // ? inventory history?
 
   return (
-    <main className='h-full flex flex-col flex-1 p-4 gap-2'>
-
-      <div className='grid 
+    <main className="h-full flex flex-col flex-1 p-4 gap-2">
+      <div
+        className="grid 
       grid-cols-3 gap-2 flex-1 min-h-0
-      '>
-
+      "
+      >
         <div className="grid grid-cols-3 col-span-3 gap-2">
           <DataCard data={dashboard.totalUsers} label="Users"></DataCard>
           <DataCard data={dashboard.totalProducts} label="Products"></DataCard>
-          <DataCard data={dashboard.pendingRequests} label="Pending Requests"></DataCard>
+          <DataCard
+            data={dashboard.pendingRequests}
+            label="Pending Requests"
+          ></DataCard>
         </div>
 
-        <div className='ring ring-gray-400 p-4 h-full overflow-y-auto min-h-0'>
-            <Users users={users}/>          
+        <div className="ring ring-gray-400 p-4 h-full overflow-y-auto min-h-0">
+          <Users users={users} />
         </div>
 
-         <div className="flex flex-col ring ring-gray-400 p-4 h-full overflow-y-auto min-h-0">
-          <div>
-            <h1 className="text-lg font-semibold">Products</h1>
-            <AllProducts products={products}/>
-          </div>
-
-          <div>
-            <h1 className="text-lg font-semibold">Product Stock</h1>
-            <ProductStockView stock={productStock} products={products} accessToken={session.user.accessToken}/>
-          </div>
-
+        <div className="flex flex-col ring ring-gray-400 p-4 h-full overflow-y-auto overflow-x-hidden min-h-0">
+          <ProductsView
+            products={products}
+            accessToken={session.user.accessToken}
+          />
         </div>
 
-        <div className='ring ring-gray-400 p-4 h-full overflow-y-auto min-h-0'>
-          <RequestsView requests={requests}/>
+        <div className="ring ring-gray-400 p-4 h-full overflow-y-auto min-h-0">
+          <RequestsView requests={requests} />
         </div>
 
         {/* <div>
           <InventoryView inventory={inventory}/>
         </div> */}
-
       </div>
 
-
-        {/* <div>
+      {/* <div>
             <Users users={users}/>          
         </div>
         
@@ -97,13 +91,9 @@ async function AdminDashboard({session}:Props) {
           <RequestsView requests={requests}/>
         </div> */}
 
-       
-
-        <div>
-        </div>
-
+      <div></div>
     </main>
-  )
+  );
 }
 
-export default AdminDashboard
+export default AdminDashboard;
