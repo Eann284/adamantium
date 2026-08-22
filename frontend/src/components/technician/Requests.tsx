@@ -1,55 +1,134 @@
-import { MaterialRequest } from '@/src/types/materialRequest'
-import React from 'react'
+
+import { MaterialRequest } from "@/src/types/materialRequest";
+import React from "react";
+
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { Product } from "@/src/types/product";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
-    requests: MaterialRequest[]
+  requests: MaterialRequest[];
+  products: Product[];
 }
 
-function Requests({requests}:Props) {
+function Requests({ requests, products }: Props) {
   return (
-    <div className='flex flex-col gap-2'>
-      {requests.map(req=>(
-        <div className="ring p-4 rounded-md" key={req.mrf_id}>
-            <h1 className='text-lg'>{req.date}</h1>
+    <div className="flex flex-col gap-3">
+      <h1 className="text-lg">My Requests</h1>
 
-            <div className='grid grid-cols-2'>
-                <div>
-                    <p>Approval Status: {req.approval_status}</p>
-                    <p>Approved by: {req.approval_status != "Approved" ? "-" : req.approved_by}</p>
-                </div>
+      {requests.map((req) => {
+        let statusText = "";
 
-                <div>
-                    <p>Release Status: {req.release_status}</p>
-                    <p>Released by: {req.release_status != "Released" ? "-" : req.released_by}</p>
-                </div>
-            </div>
+        if (req.approval_status === "Pending") {
+          statusText = "For Approval";
+        } else if (req.approval_status === "Approved") {
+          statusText = "For Release";
+        } else if (req.approval_status === "Not Approved") {
+          statusText = "Not Approved";
+        }
 
-            <section>
-                
+        if (req.approval_status === "Approved" && req.release_status === "Pending") {
+          statusText = "For Release";
+        } else if (req.approval_status === "Approved"  && req.release_status === "Released") {
+          statusText = "Released";
+        } else if (req.approval_status === "Approved" && req.release_status === "Not Released") {
+          statusText = "Rejected";
+        }
 
-            <table className='table-fixed w-full'>
-                <thead className='text-left'>
-                    <tr>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
+         const getBadgeClass = (statusText: string) => {
+            switch (statusText) {
+            case "For Approval":
+                return "bg-yellow-500 hover:bg-yellow-600 text-white";
+            case "Approved":
+                return "bg-green-500 hover:bg-green-600 text-white";
+            case "Not Approved":
+                return "bg-red-500 hover:bg-red-600 text-white";
+            case "For Release":
+                return "bg-amber-500 hover:bg-green-600 text-white";
+            case "Released":
+                return "bg-green-500 hover:bg-green-600 text-white";
+            case "Rejected":
+                return "bg-red-500 hover:bg-green-600 text-white";
+            default:
+                return "bg-gray-500 text-white";
+            }
+        };
 
-            <tbody>
+        return (
+          <Card key={req.mrf_id}>
+            <CardHeader>
+              <CardTitle>
+                {new Date(req.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                })}
+              </CardTitle>
 
-            {req.items.map(item=>(
-                <tr key={item.product_id} className='col-span-2'>
-                    <td>Product {item.product_id}</td>
-                    <td>{item.quantity}</td>
-                </tr>
-            ))}
-            </tbody>
-            </table>
-            </section>
-        </div>
-      ))}
+              <CardDescription>
+                MRF #{req.mrf_id}
+              </CardDescription>
+
+              <CardAction>
+                <Badge className={getBadgeClass(statusText)}>
+                    {statusText}
+                </Badge>
+              </CardAction>
+            </CardHeader>
+
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Quantity</TableHead>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  {req.items.map((item) => {
+                    const product = products.find(
+                      (product) => product.id === item.product_id
+                    );
+
+                    return (
+                      <TableRow key={item.product_id}>
+                        <TableCell>
+                          {product?.product_name ?? `Product ${item.product_id}`}
+                        </TableCell>
+
+                        <TableCell>
+                          {item.quantity}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
-  )
+  );
 }
 
-export default Requests
+export default Requests;

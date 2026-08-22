@@ -37,12 +37,12 @@ async function TechnicianDashboard({session}:Props) {
       lg:grid-cols-2
       '>
 
-        <section className='ring ring-gray-400 h-full p-4'>
+        <section className='ring ring-gray-200 rounded-lg h-full p-4'>
           <MaterialRequestForm accessToken={session.user.accessToken} products={products}/>
         </section>
         
-        <section className='ring ring-gray-400 p-4 h-full overflow-y-auto min-h-0'>
-          <Requests requests={requests}/>
+        <section className='ring ring-gray-200 p-4 rounded-lg h-full overflow-y-auto min-h-0'>
+          <Requests requests={requests} products={products}/>
         </section>
         </div>
 
