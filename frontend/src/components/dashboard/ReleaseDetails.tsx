@@ -1,21 +1,56 @@
 "use client";
-import { approveRequest, disapproveRequest, rejectRequest, releaseRequest } from "@/src/services/requestService";
+import { rejectRequest, releaseRequest } from "@/src/services/requestService";
 import { MaterialRequest } from "@/src/types/materialRequest";
-import React, { useState } from "react";
 import toast from "react-hot-toast";
 
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+
+import { Product } from "@/src/types/product";
 interface Props {
   release: MaterialRequest | null;
+  products: Product[]
   accessToken: string
 }
 
-function ReleaseDetails({ release, accessToken }: Props) {
+function ReleaseDetails({ release, products, accessToken }: Props) {
 
 
     
   if (!release) {
-    return <div>Select a request</div>;
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyTitle>No Request Selected.</EmptyTitle>
+          <EmptyDescription>Please Select a Request to view.</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
   }
 
 
@@ -48,41 +83,53 @@ function ReleaseDetails({ release, accessToken }: Props) {
 
 
   return (
-    <div className="ring ring-gray-400 p-4 flex flex-col grow rounded-lg">
-        
-    <h2 className="text-xl font-semibold">MRF-{release.mrf_id}</h2>
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <h1 className="text-xl font-semibold">MRF - {release.mrf_id}</h1>
+        </CardTitle>
+        <CardDescription>
+          Requested by: {release.requestor_email}
+        </CardDescription>
+        <CardAction className="flex flex-col"></CardAction>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Product</TableHead>
+              <TableHead>Quantity</TableHead>
+            </TableRow>
+          </TableHeader>
 
-    <div className="flex flex-row justify-between">
+          <TableBody>
+            {release.items.map((item) => {
+              const product = products.find(
+                (product) => product.id === item.product_id,
+              );
 
-    <section>
+              return (
+                <TableRow key={item.product_id}>
+                  <TableCell>
+                    {product?.product_name ?? `Product ${item.product_id}`}
+                  </TableCell>
 
-      <p>Requested by: {release.requestor_email}<span></span></p>
-      <p>Approval Status: {release.approval_status}</p>
-      {/* <p>{request.release_status}</p> */}
-
-        <section>
-        <h1 className="font-semibold">Items:</h1>
-
-        <div>
-        {release.items.map((item, index) => (
-            <div key={index}>
-            Product {item.product_id}
-            {" - "}
-            Qty {item.quantity}
-            </div>
-        ))}
-        </div>
-      </section>
-    </section>
-
-
-      <section className="flex flex-row gap-3 h-10">
-        <button onClick={handleRelease}className="size-15 bg-green-500 font-semibold text-white ring rounded-full"  type="button">Release</button>
-        <button onClick={handleReject}className="size-15 bg-red-500 font-semibold text-white ring rounded-full"  type="button">Reject</button>
-      </section>
-    </div>
-
-    </div>
+                  <TableCell>{item.quantity}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </CardContent>
+      <CardFooter className="flex flex-row gap-2">
+        <Button className="bg-green-500" onClick={handleRelease}>
+          Approve
+        </Button>
+        <Button className="bg-red-500" onClick={handleReject}>
+          Disapprove
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
 
