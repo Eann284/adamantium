@@ -10,7 +10,9 @@ interface Props {
 
 function PendingList({pendingReleases, onView}:Props) {
   return (
-   <section className='ring ring-gray-400 p-4 h-full overflow-y-auto min-h-0'>
+   <section className='ring ring-gray-200 rounded-lg p-4 h-full overflow-y-auto min-h-0'>
+      <h1 className="text-xl font-semibold mb-2">Requests For Release</h1>
+      
       <ul>
         {pendingReleases.map(req=>(
             <li key={req.mrf_id}>

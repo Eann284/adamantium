@@ -4,13 +4,15 @@ import { MaterialRequest } from "@/src/types/materialRequest";
 import PendingList from "./PendingList";
 import { useState } from "react";
 import RequestDetails from "./RequestDetails";
+import { Product } from "@/src/types/product";
 
 interface Props {
   pending: MaterialRequest[];
+  products: Product[]
   accessToken: string;
 }
 
-function SupervisorClient({ pending, accessToken }: Props) {
+function SupervisorClient({ pending, products, accessToken }: Props) {
   const [selectedRequest, setSelectedRequest] =
     useState<MaterialRequest | null>(null);
 
@@ -32,14 +34,14 @@ function SupervisorClient({ pending, accessToken }: Props) {
 
           {/* right panel split vertically */}
 
-          <section className="ring ring-gray-400 grid grid-cols-1 p-2">
+          <section className="ring ring-gray-200 rounded-lg grid grid-cols-1 p-2">
             <div className="p-2 overflow-y-auto min-h-0">
               <RequestDetails
                 request={selectedRequest}
+                products={products}
                 accessToken={accessToken}
               />
             </div>
-            <div>bottom</div>
           </section>
         </div>
       </main>
